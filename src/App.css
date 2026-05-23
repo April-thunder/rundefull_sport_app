@@ -1,0 +1,556 @@
+/* ==================== ГЛОБАЛЬНЫЕ СТИЛИ ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+}
+
+body {
+  background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+  padding: 2rem;
+}
+
+:root {
+  --primary-blue: #1e4a76;
+  --light-blue: #eef5ff;
+  --silver: #cbd5e1;
+  --silver-light: #f1f5f9;
+  --accent-silver: #94a3b8;
+  --text-dark: #0f172a;
+  --text-muted: #334155;
+  --border-light: #e2e8f0;
+  --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ==================== ОСНОВНОЙ КОНТЕЙНЕР ==================== */
+.app-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 2rem;
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+}
+
+/* ==================== ШАПКА ==================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-blue), #2c6e9e);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.profile-btn {
+  background: var(--silver-light);
+  border: 1px solid var(--silver);
+  padding: 0.5rem 1.2rem;
+  border-radius: 40px;
+  font-weight: 500;
+  color: var(--primary-blue);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.profile-btn:hover {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+}
+
+/* ==================== СЕКЦИЯ ПОЛЬЗОВАТЕЛЯ ==================== */
+.user-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  background: var(--silver-light);
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  align-items: flex-start;
+}
+
+/* Фото пользователя */
+.user-photo-block {
+  flex-shrink: 0;
+}
+.photo-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #cbd5e1;
+  box-shadow: 0 8px 14px rgba(0,0,0,0.1);
+}
+.photo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+}
+.photo-btn {
+  background: white;
+  border: none;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.photo-btn.add-photo {
+  background: #1e4a76;
+  color: white;
+}
+.photo-btn.delete-photo {
+  background: #dc2626;
+  color: white;
+}
+
+/* Данные пользователя */
+.user-details {
+  background: white;
+  padding: 1rem 1.8rem;
+  border-radius: 1.2rem;
+  min-width: 180px;
+}
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.info-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px dashed var(--border-light);
+  padding-bottom: 0.3rem;
+}
+.info-field dt {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.info-field dd {
+  color: var(--primary-blue);
+  font-weight: 500;
+}
+
+/* Статистика (количество, дистанция, период) */
+.stats-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 1.2rem;
+  margin-left: auto;
+  box-shadow: var(--card-shadow);
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.stat-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--accent-silver);
+  letter-spacing: 0.5px;
+}
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  line-height: 1.2;
+}
+.stat-unit {
+  font-size: 0.9rem;
+  font-weight: normal;
+  color: var(--text-muted);
+}
+.period-select {
+  background: var(--silver-light);
+  border: 1px solid var(--silver);
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  font-weight: 500;
+  color: var(--primary-blue);
+  text-align: center;
+  text-align-last: center;
+}
+
+/* ==================== ДВА СТОЛБЦА ==================== */
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: 2rem;
+  margin-top: 1rem;
+  align-items: stretch;
+}
+
+/* Левая колонка — гибкая, чтобы прижать пагинацию */
+.left-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Кнопка добавления тренировки */
+.add-workout-btn {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 60px;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.add-workout-btn:hover {
+  background: #0f3b5c;
+  transform: scale(0.98);
+}
+
+/* Список тренировок */
+.workouts-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+  margin-bottom: 1rem;
+  min-height: 180px;
+}
+
+/* Карточка тренировки */
+.workout-tab {
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 1rem;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+  box-shadow: var(--card-shadow);
+}
+.workout-tab:hover {
+  border-color: var(--primary-blue);
+  background: var(--light-blue);
+}
+.workout-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: baseline;
+  font-size: 0.85rem;
+}
+.workout-info .date {
+  font-weight: 600;
+  color: var(--text-dark);
+  min-width: 85px;
+}
+.workout-info .distance {
+  background: #eef2ff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 30px;
+  font-weight: 500;
+}
+.workout-info .pace {
+  color: var(--primary-blue);
+  font-weight: 500;
+}
+
+/* Кнопки действий (карандаш, корзина) */
+.workout-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.edit-workout,
+.delete-workout {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+.edit-workout:hover {
+  color: #1e4a76;
+}
+.delete-workout:hover {
+  color: #dc2626;
+}
+
+/* Пагинация */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1rem 0 1.8rem;
+}
+.page-arrow {
+  background: var(--silver-light);
+  border: 1px solid var(--silver);
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.page-arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.page-num {
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.page-num.active {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+}
+
+/* ==================== ОБУВЬ ==================== */
+.shoe-category {
+  margin-top: 1.5rem;
+}
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 1.5rem 0 1rem 0;
+  color: var(--text-dark);
+}
+.shoe-grid {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.shoe-card {
+  background: white;
+  flex: 1;
+  min-width: 100px;
+  border-radius: 1rem;
+  padding: 0.8rem 0.4rem;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-light);
+  transition: 0.2s;
+}
+.shoe-card img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+.shoe-model {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.shoe-mileage {
+  font-size: 0.7rem;
+  color: var(--accent-silver);
+}
+.rec-shoe-header {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  background: var(--silver-light);
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  margin-bottom: 0.4rem;
+}
+
+/* ==================== ПРАВЫЙ СТОЛБЕЦ ==================== */
+.comp-card {
+  background: white;
+  border-radius: 1.2rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--card-shadow);
+  border-left: 4px solid var(--primary-blue);
+}
+.comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.delete-race {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #94a3b8;
+}
+.race-details {
+  list-style: none;
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+.add-race-btn {
+  background: var(--silver-light);
+  border: 1px dashed var(--silver);
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: 40px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+.records-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  background: var(--silver-light);
+  padding: 0.6rem 1rem;
+  border-radius: 1rem;
+}
+.record-dist {
+  font-weight: 600;
+}
+.record-time {
+  font-family: monospace;
+  font-weight: 500;
+  color: var(--primary-blue);
+}
+
+/* ==================== ФУТЕР ==================== */
+.app-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  border-top: 1px solid var(--border-light);
+  padding-top: 1.5rem;
+}
+
+/* ==================== МОДАЛЬНЫЕ ОКНА ==================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  min-width: 320px;
+  max-width: 90%;
+  box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+}
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.modal-content form label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+}
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.modal-buttons button {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  background: #1e4a76;
+  color: white;
+  font-weight: bold;
+}
+.modal-buttons button:last-child {
+  background: #ccc;
+  color: black;
+}
+
+/* ==================== ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ ==================== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ==================== АДАПТИВНОСТЬ ==================== */
+@media (max-width: 950px) {
+  .two-columns {
+    grid-template-columns: 1fr;
+  }
+  .stats-block {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  .app-container {
+    padding: 1.5rem;
+  }
+}
