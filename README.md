@@ -1,16 +1,45 @@
-# React + Vite
+# RUNDEFULL — беговой трекер
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Приложение на React для учёта тренировок, анализа статистики, подбора обуви и контроля соревнований.
 
-Currently, two official plugins are available:
+## Реализованный функционал
+- Добавление, редактирование, удаление тренировок (CRUD)
+- Пагинация списка тренировок (по 3 на страницу)
+- Сохранение данных в localStorage (тренировки, профиль пользователя)
+- Модальные окна для тренировок и профиля
+- Адаптивный дизайн (сине-серебристая гамма)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Стек
+- React (функциональные компоненты, хуки useState, useEffect)
+- Vite
+- CSS (один файл App.css с группировкой по компонентам)
 
-## React Compiler
+## Основные компоненты
+- App (главный, состояние и логика)
+- WorkoutList, WorkoutItem (список тренировок)
+- AddWorkoutModal, EditWorkoutModal
+- ProfileModal, UserCard, UserDetails
+- StatsPanel (статистика и выбор периода)
+- ShoesSection, RaceSection, RecordsList
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Данные
+Начальные данные в src/data/initialData.js:
+- initialWorkouts (тренировки)
+- initialShoes (обувь)
+- initialRaces (соревнования)
+- initialUser (пользователь)
 
-## Expanding the ESLint configuration
+## Текущее состояние
+- Тренировки хранятся в localStorage, есть пагинация, редактирование, удаление.
+- Выпадающий список периода (неделя/месяц/год) в StatsPanel пока не связан с логикой — нужно реализовать фильтрацию тренировок по дате.
+- Рекорды (10 км, полумарафон, марафон) пока статические — нужно вычислять из тренировок.
+- Пробег обуви не обновляется при добавлении тренировок.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Следующие задачи (на выбор)
+1. Фильтрация статистики по периодам (неделя/месяц/год)
+2. Автоматический расчёт рекордов из тренировок
+3. Обновление пробега обуви
+4. Деплой на Vercel или Netlify
+
+## Ссылка на репозиторий
+[Вставьте ссылку на ваш GitHub]
