@@ -362,16 +362,21 @@ body {
 .shoe-grid {
   list-style: none;
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0;
 }
 .shoe-card {
+  flex: 1 1 200px;   /* растяжение, сжатие, базовый размер */
+  max-width: 250px;  /* ограничиваем максимальную ширину */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   background: white;
-  flex: 1;
-  min-width: 100px;
   border-radius: 1rem;
   padding: 0.8rem 0.4rem;
-  text-align: center;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--border-light);
   transition: 0.2s;
@@ -391,13 +396,16 @@ body {
   color: var(--accent-silver);
 }
 .rec-shoe-header {
-  font-size: 0.7rem;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
   text-transform: uppercase;
   background: var(--silver-light);
   display: inline-block;
   padding: 0.2rem 0.6rem;
   border-radius: 20px;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.6rem;
 }
 
 /* ==================== ПРАВЫЙ СТОЛБЕЦ ==================== */

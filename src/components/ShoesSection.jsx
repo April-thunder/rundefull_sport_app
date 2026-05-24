@@ -1,3 +1,7 @@
+import nikeImg from '../assets/nike-pegasus.webp';
+import adidasImg from '../assets/adidas-adios.webp';
+import hokaImg from '../assets/hoka-clifton.jpg';
+
 function ShoesSection() {
   return (
     <>
@@ -5,17 +9,17 @@ function ShoesSection() {
         <h2 id="my-shoes-heading" className="section-title">Моя обувь</h2>
         <ul className="shoe-grid">
           <li className="shoe-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/33/33809.png" alt="" aria-hidden="true" />
+            <img src={nikeImg} alt="" aria-hidden="true" />
             <div className="shoe-model">Nike Pegasus 40</div>
             <div className="shoe-mileage">пробег: 245 км</div>
           </li>
           <li className="shoe-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/33/33809.png" alt="" aria-hidden="true" />
+            <img src={adidasImg} alt="" aria-hidden="true" />
             <div className="shoe-model">Adidas Adios 7</div>
             <div className="shoe-mileage">пробег: 98 км</div>
           </li>
           <li className="shoe-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/33/33809.png" alt="" aria-hidden="true" />
+            <img src={hokaImg} alt="" aria-hidden="true" />
             <div className="shoe-model">Hoka Clifton 9</div>
             <div className="shoe-mileage">пробег: 312 км</div>
           </li>
