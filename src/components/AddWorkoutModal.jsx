@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { initialShoes } from '../data/initialData';
 
-function AddWorkoutModal({ onClose, onAdd }) {
+function AddWorkoutModal({ shoes, onClose, onAdd }) {
   const [date, setDate] = useState('');
   const [distance, setDistance] = useState('');
   const [time, setTime] = useState('');
   const [mood, setMood] = useState('😐');
-  const [shoeId, setShoeId] = useState(initialShoes[0]?.id || '');
+  const [shoeId, setShoeId] = useState(shoes[0]?.id || '');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,19 +47,34 @@ function AddWorkoutModal({ onClose, onAdd }) {
         <form onSubmit={handleSubmit}>
           <label>
             Дата:
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
           </label>
           <label>
             Дистанция (км):
-            <input type="number" step="0.1" value={distance} onChange={e => setDistance(e.target.value)} required />
+            <input
+              type="number"
+              step="0.1"
+              value={distance}
+              onChange={(e) => setDistance(e.target.value)}
+              required
+            />
           </label>
           <label>
             Время (ч:мм:сс или мм:сс):
-            <input value={time} onChange={e => setTime(e.target.value)} required />
+            <input
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              required
+            />
           </label>
           <label>
             Самочувствие:
-            <select value={mood} onChange={e => setMood(e.target.value)}>
+            <select value={mood} onChange={(e) => setMood(e.target.value)}>
               <option>😁</option>
               <option>🙂</option>
               <option>😐</option>
@@ -68,15 +83,19 @@ function AddWorkoutModal({ onClose, onAdd }) {
           </label>
           <label>
             Обувь:
-            <select value={shoeId} onChange={e => setShoeId(e.target.value)}>
-              {initialShoes.map(shoe => (
-                <option key={shoe.id} value={shoe.id}>{shoe.model} (пробег: {shoe.mileage} км)</option>
+            <select value={shoeId} onChange={(e) => setShoeId(e.target.value)}>
+              {shoes.map((shoe) => (
+                <option key={shoe.id} value={shoe.id}>
+                  {shoe.brand} {shoe.model} (пробег: {shoe.mileage} км)
+                </option>
               ))}
             </select>
           </label>
           <div className="modal-buttons">
             <button type="submit">Сохранить</button>
-            <button type="button" onClick={onClose}>Отмена</button>
+            <button type="button" onClick={onClose}>
+              Отмена
+            </button>
           </div>
         </form>
       </div>

@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { initialShoes } from '../data/initialData';
 
-function EditWorkoutModal({ workout, onClose, onUpdate }) {
+function EditWorkoutModal({ workout, shoes, onClose, onUpdate }) {
   const [date, setDate] = useState(workout.date);
   const [distance, setDistance] = useState(workout.distance);
   const [time, setTime] = useState(workout.time);
   const [mood, setMood] = useState(workout.mood);
-  const [shoe, setShoe] = useState(workout.shoe);
-  // Находим id обуви по названию модели, сохранённой в тренировке
-  const currentShoe = initialShoes.find(shoe => shoe.model === workout.shoe);
-  const [shoeId, setShoeId] = useState(currentShoe ? currentShoe.id : initialShoes[0]?.id || '');
+  // Инициализируем shoeId из тренировки, если нет – берем первую пару обуви
+  const [shoeId, setShoeId] = useState(workout.shoeId || (shoes[0]?.id || ''));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,7 +24,7 @@ function EditWorkoutModal({ workout, onClose, onUpdate }) {
     }
     const pace = (totalMinutes / parseFloat(distance)).toFixed(2);
 
-    const selectedShoe = initialShoes.find(shoe => shoe.id === parseInt(shoeId));
+    const selectedShoe = shoes.find(shoe => shoe.id === parseInt(shoeId));
     const updatedWorkout = {
       ...workout,
       date,
@@ -35,14 +32,14 @@ function EditWorkoutModal({ workout, onClose, onUpdate }) {
       time,
       pace,
       mood,
-      shoe: selectedShoe ? selectedShoe.model : '',
+      shoe: selectedShoe ? `${selectedShoe.brand} ${selectedShoe.model}` : '',
       shoeId: parseInt(shoeId),
     };
     onUpdate(updatedWorkout);
     onClose();
   };
 
-   return (
+  return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2>Редактировать тренировку</h2>
@@ -68,9 +65,9 @@ function EditWorkoutModal({ workout, onClose, onUpdate }) {
           <label>
             Обувь:
             <select value={shoeId} onChange={e => setShoeId(e.target.value)}>
-              {initialShoes.map(shoe => (
+              {shoes.map(shoe => (
                 <option key={shoe.id} value={shoe.id}>
-                  {shoe.model} (пробег: {shoe.mileage} км)
+                  {shoe.brand} {shoe.model} (пробег: {shoe.mileage} км)
                 </option>
               ))}
             </select>

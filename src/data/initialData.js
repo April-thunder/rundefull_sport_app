@@ -29,7 +29,7 @@ export const initialWorkouts = [
 ];
 
 export const initialShoes = [
-  { id: 1, model: 'Nike Pegasus 40', mileage: 245 },
-  { id: 2, model: 'Adidas Adios 7', mileage: 98 },
-  { id: 3, model: 'Hoka Clifton 9', mileage: 312 },
+  { id: 1, model: 'Pegasus 40', brand: 'Nike', mileage: 245, maxMileage: 800 },
+  { id: 2, model: 'Adios 7', brand: 'Adidas', mileage: 98, maxMileage: 800 },
+  { id: 3, model: 'Clifton 9', brand: 'Hoka', mileage: 312, maxMileage: 800 },
 ];
