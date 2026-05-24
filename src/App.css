@@ -264,6 +264,7 @@ body {
   align-items: center;
   transition: all 0.2s;
   box-shadow: var(--card-shadow);
+  cursor: pointer;
 }
 .workout-tab:hover {
   border-color: var(--primary-blue);
@@ -290,31 +291,6 @@ body {
 .workout-info .pace {
   color: var(--primary-blue);
   font-weight: 500;
-}
-
-/* Кнопки действий (карандаш, корзина) */
-.workout-actions {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-.edit-workout,
-.delete-workout {
-  background: transparent;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  line-height: 1;
-  color: #94a3b8;
-  transition: color 0.2s;
-}
-.edit-workout:hover {
-  color: #1e4a76;
-}
-.delete-workout:hover {
-  color: #dc2626;
 }
 
 /* Пагинация */
@@ -368,8 +344,8 @@ body {
   padding: 0;
 }
 .shoe-card {
-  flex: 1 1 200px;   /* растяжение, сжатие, базовый размер */
-  max-width: 250px;  /* ограничиваем максимальную ширину */
+  flex: 1 1 200px;
+  max-width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -535,6 +511,134 @@ body {
 .modal-buttons button:last-child {
   background: #ccc;
   color: black;
+}
+
+/* ==================== МОДАЛКА ДЕТАЛЕЙ ТРЕНИРОВКИ ==================== */
+.workout-detail-modal {
+  max-width: 1000px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+.detail-header {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-field {
+  background: var(--silver-light);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.detail-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--accent-silver);
+}
+
+.detail-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+
+/* Блок карта + графики в ряд (70% / 30%) */
+.detail-map-and-charts {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+  align-items: stretch;
+}
+
+.detail-map {
+  flex: 7; /* 70% */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.detail-charts-stack {
+  flex: 3; /* 30% */
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  justify-content: space-between;
+}
+
+.chart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.chart-title {
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 0.3rem;
+  color: var(--text-muted);
+}
+
+.detail-map img,
+.chart img {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  object-fit: contain;
+  max-height: 100%;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.detail-edit, .detail-delete {
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.detail-edit {
+  background: var(--primary-blue);
+  color: white;
+}
+
+.detail-delete {
+  background: #dc2626;
+  color: white;
+}
+
+@media (max-width: 640px) {
+  .detail-map-and-charts {
+    flex-direction: column;
+  }
+  .detail-map, .detail-charts-stack {
+    flex: auto;
+  }
 }
 
 /* ==================== ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ ==================== */

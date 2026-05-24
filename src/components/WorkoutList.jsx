@@ -2,23 +2,21 @@ import WorkoutItem from './WorkoutItem';
 
 function WorkoutList({ 
   workouts, 
-  onDeleteWorkout, 
-  onEditWorkout, 
+  onWorkoutClick,
   currentPage, 
   totalPages, 
   onPageChange,
   onPrevPage,
   onNextPage 
 }) {
- return (
+  return (
     <>
       <ul className="workouts-list">
         {workouts.map(workout => (
           <WorkoutItem
             key={workout.id}
             workout={workout}
-            onDelete={() => onDeleteWorkout(workout.id)}
-            onEdit={() => onEditWorkout(workout)}
+            onClick={onWorkoutClick}
           />
         ))}
       </ul>
@@ -44,4 +42,5 @@ function WorkoutList({
     </>
   );
 }
+
 export default WorkoutList;

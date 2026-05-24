@@ -4,13 +4,14 @@ import Header from "./components/Header";
 import UserCard from "./components/UserCard";
 import UserDetails from "./components/UserDetails";
 import StatsPanel from "./components/StatsPanel";
-import WorkoutList from "./components/WorkoutList";
 import ShoesSection from "./components/ShoesSection";
 import RaceSection from "./components/RaceSection";
 import RecordsList from "./components/RecordsList";
 import Footer from "./components/Footer";
+import WorkoutList from "./components/WorkoutList";
+import WorkoutDetailModal from './components/WorkoutDetailModal';
 import AddWorkoutModal from "./components/AddWorkoutModal";
-import { initialWorkouts } from "./data/initialData";
+import { initialWorkouts, initialShoes } from "./data/initialData";
 import EditWorkoutModal from './components/EditWorkoutModal';
 
 
@@ -85,6 +86,22 @@ const goToPrevPage = () => {
 };
 const goToPage = (page) => setCurrentPage(page);
 
+const [selectedWorkout, setSelectedWorkout] = useState(null);
+const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+const openWorkoutDetail = (workout) => {
+  setSelectedWorkout(workout);
+  setIsDetailModalOpen(true);
+};
+const [shoes, setShoes] = useState(() => {
+  const saved = localStorage.getItem("rundefull_shoes");
+  return saved ? JSON.parse(saved) : initialShoes;
+});
+
+useEffect(() => {
+  localStorage.setItem("rundefull_shoes", JSON.stringify(shoes));
+}, [shoes]);
+
   return (
     <>
       <main className="app-container">
@@ -111,14 +128,13 @@ const goToPage = (page) => setCurrentPage(page);
             </button>
 
             <WorkoutList
-              workouts={currentWorkouts} 
-  onDeleteWorkout={deleteWorkout} 
-  onEditWorkout={openEditModal}
-  currentPage={currentPage}
-  totalPages={totalPages}
-  onPageChange={goToPage}
-  onPrevPage={goToPrevPage}
-  onNextPage={goToNextPage}
+              workouts={currentWorkouts}
+              onWorkoutClick={openWorkoutDetail}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={goToPage}
+              onPrevPage={goToPrevPage}
+              onNextPage={goToNextPage}
             />
             <ShoesSection />
           </section>
@@ -143,6 +159,15 @@ const goToPage = (page) => setCurrentPage(page);
             workout={editingWorkout}
             onClose={() => setIsEditModalOpen(false)}
             onUpdate={updateWorkout}
+          />
+        )}
+        {isDetailModalOpen && selectedWorkout && (
+          <WorkoutDetailModal
+            workout={selectedWorkout}
+            shoes={shoes} // добавь эту строку
+            onClose={() => setIsDetailModalOpen(false)}
+            onUpdate={updateWorkout}
+            onDelete={deleteWorkout}
           />
         )}
       </main>
