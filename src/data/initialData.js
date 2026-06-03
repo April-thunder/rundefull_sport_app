@@ -33,3 +33,15 @@ export const initialShoes = [
   { id: 2, model: 'Adios 7', brand: 'Adidas', mileage: 98, maxMileage: 800 },
   { id: 3, model: 'Clifton 9', brand: 'Hoka', mileage: 312, maxMileage: 800 },
 ];
+
+export const initialUser = {
+  id: 1,
+  name: 'Алексей Алексеев',
+  age: 34,
+  weight: 72,
+  height: 178,
+  restingHeartRate: 58,
+  maxHeartRate: 185,
+  goal: 'sub-3:30 марафон',
+  photo: null,
+};
