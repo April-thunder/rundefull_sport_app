@@ -343,7 +343,7 @@ body {
   padding: 0;
 }
 .shoe-card {
-  flex: 1 1 200px;
+   flex: 1 1 200px;
   max-width: 250px;
   display: flex;
   flex-direction: column;
@@ -351,16 +351,16 @@ body {
   text-align: center;
   background: white;
   border-radius: 1rem;
-  padding: 0.8rem 0.4rem;
+  padding: 0.8rem 0.4rem 1.5rem 0.4rem;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--border-light);
   transition: 0.2s;
+  height: auto;
 }
 .shoe-card img {
   width: 70px;
   height: 70px;
   object-fit: contain;
-  margin-bottom: 0.5rem;
 }
 .shoe-model {
   font-weight: 600;
@@ -719,7 +719,7 @@ body {
 
 /* Индикатор ресурса */
 .shoe-resource {
-  margin-top: 0.5rem;
+ margin-top: 0.5rem;
   width: 100%;
   background: #e0e0e0;
   border-radius: 10px;
@@ -736,11 +736,15 @@ body {
 .resource-bar.yellow { background-color: #ffc107; }
 .resource-bar.red { background-color: #f44336; }
 .resource-text {
-  font-size: 0.6rem;
+ font-size: 0.65rem;        
   text-align: center;
   display: block;
-  margin-top: 0.2rem;
+  margin-top: 0.3rem;
   color: var(--text-muted);
+  white-space: nowrap;       
+  line-height: 1.2;
+  padding: 0 0.2rem;
+  overflow: visible;     
 }
 
 /* Радиокнопки в модалке */
