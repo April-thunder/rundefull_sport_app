@@ -14,7 +14,6 @@ import WorkoutDetailModal from '../components/WorkoutDetailModal';
 import AddShoeModal from '../components/AddShoeModal';
 
 function HomePage() {
-  // Получаем данные и функции из контекста
   const {
     workouts,
     shoes,
@@ -24,14 +23,9 @@ function HomePage() {
     addShoe,
   } = useApp();
 
-  // Локальные состояния для UI этой страницы
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [isAddShoeModalOpen, setIsAddShoeModalOpen] = useState(false);
-  const [editingWorkout, setEditingWorkout] = useState(null);
-  const [selectedWorkout, setSelectedWorkout] = useState(null);
-  
+  // ✅ Единое состояние для модалок
+  const [modal, setModal] = useState(null); // { type: 'add' | 'edit' | 'detail' | 'addShoe', data? }
+
   // Пагинация
   const [currentPage, setCurrentPage] = useState(1);
   const workoutsPerPage = 3;
@@ -39,6 +33,7 @@ function HomePage() {
   const indexOfFirstWorkout = indexOfLastWorkout - workoutsPerPage;
   const currentWorkouts = workouts.slice(indexOfFirstWorkout, indexOfLastWorkout);
   const totalPages = Math.ceil(workouts.length / workoutsPerPage);
+
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -47,23 +42,19 @@ function HomePage() {
   };
   const goToPage = (page) => setCurrentPage(page);
 
-  // Обработчики
-  const openEditModal = (workout) => {
-    setEditingWorkout(workout);
-    setIsEditModalOpen(true);
-  };
-  const openWorkoutDetail = (workout) => {
-    setSelectedWorkout(workout);
-    setIsDetailModalOpen(true);
-  };
+  // Обработчики открытия модалок
+  const openAddWorkout = () => setModal({ type: 'add' });
+  const openEditWorkout = (workout) => setModal({ type: 'edit', data: workout });
+  const openDetailWorkout = (workout) => setModal({ type: 'detail', data: workout });
+  const openAddShoe = () => setModal({ type: 'addShoe' });
+  const closeModal = () => setModal(null);
 
-  // Вычисляем общую статистику для StatsPanel (можно вынести в утилиту)
+  // Статистика для StatsPanel
   const totalWorkouts = workouts.length;
   const totalDistance = workouts.reduce((sum, w) => sum + w.distance, 0).toFixed(1);
 
   return (
     <>
-      {/* Верхняя секция пользователя и статистики */}
       <section className="user-stats-row" aria-label="Информация о пользователе и статистика">
         <UserCard />
         <UserDetails />
@@ -71,16 +62,15 @@ function HomePage() {
       </section>
 
       <div className="two-columns">
-        {/* Левая колонка: тренировки и обувь */}
         <section className="left-column" aria-label="Тренировки и обувь">
           <div className="section-header">
             <h2 className="section-title">Тренировки</h2>
-            <button className="add-icon-btn" onClick={() => setIsModalOpen(true)}>+</button>
+            <button className="add-icon-btn" onClick={openAddWorkout}>+</button>
           </div>
 
           <WorkoutList
             workouts={currentWorkouts}
-            onWorkoutClick={openWorkoutDetail}
+            onWorkoutClick={openDetailWorkout}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={goToPage}
@@ -88,44 +78,43 @@ function HomePage() {
             onNextPage={goToNextPage}
           />
 
-          <ShoesSection shoes={shoes} onAddShoe={() => setIsAddShoeModalOpen(true)} />
+          <ShoesSection shoes={shoes} onAddShoe={openAddShoe} />
         </section>
 
-        {/* Правая колонка: соревнования и рекорды */}
         <section className="right-column" aria-label="Соревнования и рекорды">
           <RaceSection />
           <RecordsList />
         </section>
       </div>
 
-      {/* Модалки */}
-      {isModalOpen && (
+      {/* ✅ Рендеринг модалок через единый state */}
+      {modal?.type === 'add' && (
         <AddWorkoutModal
           shoes={shoes}
-          onClose={() => setIsModalOpen(false)}
+          onClose={closeModal}
           onAdd={addWorkout}
         />
       )}
-      {isEditModalOpen && editingWorkout && (
+      {modal?.type === 'edit' && (
         <EditWorkoutModal
-          workout={editingWorkout}
+          workout={modal.data}
           shoes={shoes}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={closeModal}
           onUpdate={updateWorkout}
         />
       )}
-      {isDetailModalOpen && selectedWorkout && (
+      {modal?.type === 'detail' && (
         <WorkoutDetailModal
-          workout={selectedWorkout}
+          workout={modal.data}
           shoes={shoes}
-          onClose={() => setIsDetailModalOpen(false)}
+          onClose={closeModal}
           onUpdate={updateWorkout}
           onDelete={deleteWorkout}
         />
       )}
-      {isAddShoeModalOpen && (
+      {modal?.type === 'addShoe' && (
         <AddShoeModal
-          onClose={() => setIsAddShoeModalOpen(false)}
+          onClose={closeModal}
           onAdd={addShoe}
         />
       )}

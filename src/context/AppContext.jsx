@@ -1,3 +1,4 @@
+// src/context/AppContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { initialWorkouts, initialShoes, initialUser } from '../data/initialData';
 
@@ -60,15 +61,28 @@ export function AppProvider({ children }) {
   // Обновление пользователя
   const updateUser = (newData) => setUser(prev => ({ ...prev, ...newData }));
 
-  // Фильтрация тренировок по периоду
+  // ✅ ИСПРАВЛЕННАЯ фильтрация тренировок по периоду (без мутации)
   const filterByPeriod = (periodValue) => {
     const now = new Date();
+    let startDate;
+
+    switch (periodValue) {
+      case 'week':
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case 'month':
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+      case 'year':
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        return workouts;
+    }
+
     return workouts.filter(workout => {
       const workoutDate = new Date(workout.date);
-      if (periodValue === 'week') return workoutDate >= new Date(now.setDate(now.getDate() - 7));
-      if (periodValue === 'month') return workoutDate >= new Date(now.setMonth(now.getMonth() - 1));
-      if (periodValue === 'year') return workoutDate >= new Date(now.setFullYear(now.getFullYear() - 1));
-      return true;
+      return workoutDate >= startDate;
     });
   };
 
