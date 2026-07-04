@@ -1,6 +1,5 @@
-// src/pages/HomePage.jsx
 import { useState } from 'react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../hooks/useApp';
 import UserCard from '../components/UserCard';
 import UserDetails from '../components/UserDetails';
 import StatsPanel from '../components/StatsPanel';
@@ -21,18 +20,29 @@ function HomePage() {
     updateWorkout,
     deleteWorkout,
     addShoe,
+    period,
+    setPeriod,
+    filterByPeriod,
   } = useApp();
 
-  // ✅ Единое состояние для модалок
-  const [modal, setModal] = useState(null); // { type: 'add' | 'edit' | 'detail' | 'addShoe', data? }
+  // Модалки (единое состояние)
+  const [modal, setModal] = useState(null);
 
-  // Пагинация
+  // Пагинация (для всех тренировок)
   const [currentPage, setCurrentPage] = useState(1);
   const workoutsPerPage = 3;
+  const sortedWorkouts = [...workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
   const indexOfLastWorkout = currentPage * workoutsPerPage;
   const indexOfFirstWorkout = indexOfLastWorkout - workoutsPerPage;
-  const currentWorkouts = workouts.slice(indexOfFirstWorkout, indexOfLastWorkout);
-  const totalPages = Math.ceil(workouts.length / workoutsPerPage);
+  const currentWorkouts = sortedWorkouts.slice(indexOfFirstWorkout, indexOfLastWorkout);
+  const totalPages = Math.ceil(sortedWorkouts.length / workoutsPerPage);
+
+  // Данные для статистики (фильтрация по периоду)
+  const filteredWorkouts = filterByPeriod(period);
+  const filteredTotalWorkouts = filteredWorkouts.length;
+  const filteredTotalDistance = filteredWorkouts
+    .reduce((sum, w) => sum + w.distance, 0)
+    .toFixed(1);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -42,23 +52,22 @@ function HomePage() {
   };
   const goToPage = (page) => setCurrentPage(page);
 
-  // Обработчики открытия модалок
   const openAddWorkout = () => setModal({ type: 'add' });
-  const openEditWorkout = (workout) => setModal({ type: 'edit', data: workout });
   const openDetailWorkout = (workout) => setModal({ type: 'detail', data: workout });
   const openAddShoe = () => setModal({ type: 'addShoe' });
   const closeModal = () => setModal(null);
-
-  // Статистика для StatsPanel
-  const totalWorkouts = workouts.length;
-  const totalDistance = workouts.reduce((sum, w) => sum + w.distance, 0).toFixed(1);
 
   return (
     <>
       <section className="user-stats-row" aria-label="Информация о пользователе и статистика">
         <UserCard />
         <UserDetails />
-        <StatsPanel totalWorkouts={totalWorkouts} totalDistance={totalDistance} />
+        <StatsPanel
+          totalWorkouts={filteredTotalWorkouts}
+          totalDistance={filteredTotalDistance}
+          period={period}
+          onPeriodChange={setPeriod}
+        />
       </section>
 
       <div className="two-columns">
@@ -87,7 +96,6 @@ function HomePage() {
         </section>
       </div>
 
-      {/* ✅ Рендеринг модалок через единый state */}
       {modal?.type === 'add' && (
         <AddWorkoutModal
           shoes={shoes}

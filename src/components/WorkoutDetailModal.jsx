@@ -3,6 +3,7 @@ import EditWorkoutModal from './EditWorkoutModal';
 import mapImg from '../assets/road-map.png';
 import temp from '../assets/temp.png';
 import heartRate from '../assets/heart-rate.png';
+import { formatDate } from '../utils/dateUtils';
 
 function WorkoutDetailModal({ workout, shoes, onClose, onUpdate, onDelete }) {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -12,7 +13,7 @@ function WorkoutDetailModal({ workout, shoes, onClose, onUpdate, onDelete }) {
   };
 
   const handleDelete = () => {
-    if (window.confirm(`Удалить тренировку от ${workout.date}?`)) {
+    if (window.confirm(`Удалить тренировку от ${formatDate(workout.date)}?`)) {
       onDelete(workout.id);
       onClose();
     }
@@ -35,7 +36,7 @@ function WorkoutDetailModal({ workout, shoes, onClose, onUpdate, onDelete }) {
           <div className="detail-header">
             <div className="detail-field">
               <span className="detail-label">Дата</span>
-              <span className="detail-value">{workout.date}</span>
+              <span className="detail-value">{formatDate(workout.date)}</span>
             </div>
             <div className="detail-field">
               <span className="detail-label">Дистанция</span>

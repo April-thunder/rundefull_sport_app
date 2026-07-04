@@ -1,25 +1,34 @@
 // src/context/AppContext.jsx
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { AppContext } from './context';
 import { initialWorkouts, initialShoes, initialUser } from '../data/initialData';
-
-const AppContext = createContext();
+import { parseRussianDateToISO } from '../utils/dateUtils';
 
 export function AppProvider({ children }) {
-  // Тренировки
+  // Тренировки с миграцией дат
   const [workouts, setWorkouts] = useState(() => {
     const saved = localStorage.getItem('rundefull_workouts');
-    return saved ? JSON.parse(saved) : initialWorkouts;
+    let parsed = saved ? JSON.parse(saved) : initialWorkouts;
+    const migrated = parsed.map(w => {
+      if (w.date && typeof w.date === 'string' && w.date.match(/[а-я]/i)) {
+        const iso = parseRussianDateToISO(w.date);
+        if (iso) {
+          return { ...w, date: iso };
+        }
+      }
+      return w;
+    });
+    return migrated;
   });
   useEffect(() => {
     localStorage.setItem('rundefull_workouts', JSON.stringify(workouts));
   }, [workouts]);
 
-  // Обувь
+  // Обувь с миграцией
   const [shoes, setShoes] = useState(() => {
     const saved = localStorage.getItem('rundefull_shoes');
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Миграция для добавления brand (если нет)
       if (parsed.length && parsed[0].brand === undefined) {
         return parsed.map(shoe => {
           let brand = '';
@@ -47,22 +56,17 @@ export function AppProvider({ children }) {
     localStorage.setItem('rundefull_user', JSON.stringify(user));
   }, [user]);
 
-  // Период для статистики
   const [period, setPeriod] = useState('month');
 
-  // CRUD тренировок
   const addWorkout = (workout) => setWorkouts(prev => [workout, ...prev]);
   const updateWorkout = (updated) => setWorkouts(prev => prev.map(w => w.id === updated.id ? updated : w));
   const deleteWorkout = (id) => setWorkouts(prev => prev.filter(w => w.id !== id));
-
-  // CRUD обуви
   const addShoe = (shoe) => setShoes(prev => [shoe, ...prev]);
-
-  // Обновление пользователя
   const updateUser = (newData) => setUser(prev => ({ ...prev, ...newData }));
 
-  // ✅ ИСПРАВЛЕННАЯ фильтрация тренировок по периоду (без мутации)
   const filterByPeriod = (periodValue) => {
+    if (periodValue === 'all') return workouts;
+
     const now = new Date();
     let startDate;
 
@@ -103,8 +107,4 @@ export function AppProvider({ children }) {
       {children}
     </AppContext.Provider>
   );
-}
-
-export function useApp() {
-  return useContext(AppContext);
 }
