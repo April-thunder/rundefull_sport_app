@@ -1,21 +1,14 @@
-import userPhoto from '../assets/user.webp';
+import { useApp } from '../hooks/useApp';
+import defaultAvatar from '../assets/default-avatar.png';
 
 function UserCard() {
+  const { user } = useApp();
+  const photoSrc = user?.photo || defaultAvatar;
+
   return (
     <div className="user-photo-block">
       <div className="photo-wrapper">
-        <img
-          src={userPhoto}
-          alt="Фото пользователя"
-        />
-        <div className="photo-overlay">
-          <button className="photo-btn add-photo" aria-label="Добавить фото">
-            Добавить фото
-          </button>
-          <button className="photo-btn delete-photo" aria-label="Удалить фото">
-            Удалить
-          </button>
-        </div>
+        <img src={photoSrc} alt="Фото пользователя" />
       </div>
     </div>
   );

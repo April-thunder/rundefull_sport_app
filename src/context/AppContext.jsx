@@ -1,11 +1,30 @@
-// src/context/AppContext.jsx
 import { useState, useEffect } from 'react';
 import { AppContext } from './context';
 import { initialWorkouts, initialShoes, initialUser } from '../data/initialData';
 import { parseRussianDateToISO } from '../utils/dateUtils';
 
 export function AppProvider({ children }) {
-  // Тренировки с миграцией дат
+  // ---------- Аутентификация ----------
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const saved = localStorage.getItem('rundefull_auth');
+    return saved ? JSON.parse(saved) : true; // по умолчанию true для первого запуска
+  });
+
+  useEffect(() => {
+    localStorage.setItem('rundefull_auth', JSON.stringify(isAuthenticated));
+  }, [isAuthenticated]);
+
+  const login = () => {
+    setIsAuthenticated(true);
+    localStorage.setItem('rundefull_auth', JSON.stringify(true));
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    localStorage.setItem('rundefull_auth', JSON.stringify(false));
+  };
+
+  // ---------- Тренировки ----------
   const [workouts, setWorkouts] = useState(() => {
     const saved = localStorage.getItem('rundefull_workouts');
     let parsed = saved ? JSON.parse(saved) : initialWorkouts;
@@ -20,11 +39,12 @@ export function AppProvider({ children }) {
     });
     return migrated;
   });
+
   useEffect(() => {
     localStorage.setItem('rundefull_workouts', JSON.stringify(workouts));
   }, [workouts]);
 
-  // Обувь с миграцией
+  // ---------- Обувь ----------
   const [shoes, setShoes] = useState(() => {
     const saved = localStorage.getItem('rundefull_shoes');
     if (saved) {
@@ -43,27 +63,36 @@ export function AppProvider({ children }) {
     }
     return initialShoes;
   });
+
   useEffect(() => {
     localStorage.setItem('rundefull_shoes', JSON.stringify(shoes));
   }, [shoes]);
 
-  // Пользователь
+  // ---------- Пользователь ----------
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('rundefull_user');
     return saved ? JSON.parse(saved) : initialUser;
   });
+
   useEffect(() => {
     localStorage.setItem('rundefull_user', JSON.stringify(user));
   }, [user]);
 
+  // ---------- Период статистики ----------
   const [period, setPeriod] = useState('month');
 
+  // ---------- CRUD тренировок ----------
   const addWorkout = (workout) => setWorkouts(prev => [workout, ...prev]);
   const updateWorkout = (updated) => setWorkouts(prev => prev.map(w => w.id === updated.id ? updated : w));
   const deleteWorkout = (id) => setWorkouts(prev => prev.filter(w => w.id !== id));
+
+  // ---------- CRUD обуви ----------
   const addShoe = (shoe) => setShoes(prev => [shoe, ...prev]);
+
+  // ---------- Обновление пользователя ----------
   const updateUser = (newData) => setUser(prev => ({ ...prev, ...newData }));
 
+  // ---------- Фильтрация по периоду ----------
   const filterByPeriod = (periodValue) => {
     if (periodValue === 'all') return workouts;
 
@@ -90,6 +119,7 @@ export function AppProvider({ children }) {
     });
   };
 
+  // ---------- Провайдер ----------
   return (
     <AppContext.Provider value={{
       workouts,
@@ -103,6 +133,9 @@ export function AppProvider({ children }) {
       addShoe,
       updateUser,
       filterByPeriod,
+      isAuthenticated,
+      login,
+      logout,
     }}>
       {children}
     </AppContext.Provider>

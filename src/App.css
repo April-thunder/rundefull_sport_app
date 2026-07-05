@@ -53,20 +53,22 @@ body {
   color: transparent;
 }
 
-.profile-btn {
-  background: var(--silver-light);
-  border: 1px solid var(--silver);
-  padding: 0.5rem 1.2rem;
-  border-radius: 40px;
-  font-weight: 500;
-  color: var(--primary-blue);
-  cursor: pointer;
-  transition: all 0.2s;
+.logo-link {
+  text-decoration: none;
+  color: inherit;
 }
-.profile-btn:hover {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
+
+.main-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+.main-nav a {
+  text-decoration: none;
+  color: var(--primary-blue);
+  font-weight: 500;
+}
+.main-nav a:hover {
+  text-decoration: underline;
 }
 
 /* ==================== СЕКЦИЯ ПОЛЬЗОВАТЕЛЯ ==================== */
@@ -81,7 +83,6 @@ body {
   align-items: flex-start;
 }
 
-/* Фото пользователя */
 .user-photo-block {
   flex-shrink: 0;
 }
@@ -99,40 +100,7 @@ body {
   height: 100%;
   object-fit: cover;
 }
-.photo-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 0.4rem;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.photo-wrapper:hover .photo-overlay {
-  opacity: 1;
-}
-.photo-btn {
-  background: white;
-  border: none;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-.photo-btn.add-photo {
-  background: #1e4a76;
-  color: white;
-}
-.photo-btn.delete-photo {
-  background: #dc2626;
-  color: white;
-}
 
-/* Данные пользователя */
 .user-details {
   background: white;
   padding: 1rem 1.8rem;
@@ -160,7 +128,6 @@ body {
   font-weight: 500;
 }
 
-/* Статистика (количество, дистанция, период) */
 .stats-block {
   display: flex;
   flex-wrap: wrap;
@@ -215,33 +182,12 @@ body {
   align-items: stretch;
 }
 
-/* Левая колонка — гибкая, чтобы прижать пагинацию */
 .left-column {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-/* Кнопка добавления тренировки */
-.add-workout-btn {
-  background: var(--primary-blue);
-  color: white;
-  border: none;
-  width: 100%;
-  padding: 0.9rem;
-  border-radius: 60px;
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.add-workout-btn:hover {
-  background: #0f3b5c;
-  transform: scale(0.98);
-}
-
-/* Список тренировок */
 .workouts-list {
   list-style: none;
   display: flex;
@@ -252,7 +198,6 @@ body {
   min-height: 180px;
 }
 
-/* Карточка тренировки */
 .workout-tab {
   background: white;
   border: 1px solid var(--border-light);
@@ -292,7 +237,6 @@ body {
   font-weight: 500;
 }
 
-/* Пагинация */
 .pagination {
   display: flex;
   justify-content: center;
@@ -343,7 +287,7 @@ body {
   padding: 0;
 }
 .shoe-card {
-   flex: 1 1 200px;
+  flex: 1 1 200px;
   max-width: 250px;
   display: flex;
   flex-direction: column;
@@ -411,16 +355,6 @@ body {
   gap: 1rem;
   font-size: 0.9rem;
   flex-wrap: wrap;
-}
-.add-race-btn {
-  background: var(--silver-light);
-  border: 1px dashed var(--silver);
-  padding: 0.5rem;
-  width: 100%;
-  border-radius: 40px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-bottom: 1rem;
 }
 .records-list {
   list-style: none;
@@ -520,7 +454,6 @@ body {
   overflow-y: auto;
   position: relative;
 }
-
 .modal-close {
   position: absolute;
   top: 0.5rem;
@@ -538,65 +471,56 @@ body {
   gap: 0.8rem;
   margin-bottom: 1.5rem;
 }
-
 .detail-field {
   background: var(--silver-light);
   padding: 0.5rem;
   border-radius: 0.5rem;
   text-align: center;
 }
-
 .detail-label {
   display: block;
   font-size: 0.7rem;
   text-transform: uppercase;
   color: var(--accent-silver);
 }
-
 .detail-value {
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--primary-blue);
 }
 
-/* Блок карта + графики в ряд (70% / 30%) */
 .detail-map-and-charts {
   display: flex;
   gap: 1rem;
   margin: 1rem 0;
   align-items: stretch;
 }
-
 .detail-map {
-  flex: 7; /* 70% */
+  flex: 7;
   min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-
 .detail-charts-stack {
-  flex: 3; /* 30% */
+  flex: 3;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
   justify-content: space-between;
 }
-
 .chart {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-
 .chart-title {
   font-size: 0.8rem;
   text-align: center;
   margin-bottom: 0.3rem;
   color: var(--text-muted);
 }
-
 .detail-map img,
 .chart img {
   width: 100%;
@@ -612,7 +536,6 @@ body {
   justify-content: flex-end;
   margin-top: 1rem;
 }
-
 .detail-edit, .detail-delete {
   padding: 0.5rem 1rem;
   border-radius: 30px;
@@ -620,12 +543,10 @@ body {
   cursor: pointer;
   font-weight: 500;
 }
-
 .detail-edit {
   background: var(--primary-blue);
   color: white;
 }
-
 .detail-delete {
   background: #dc2626;
   color: white;
@@ -652,21 +573,7 @@ body {
   border: 0;
 }
 
-/* ==================== АДАПТИВНОСТЬ ==================== */
-@media (max-width: 950px) {
-  .two-columns {
-    grid-template-columns: 1fr;
-  }
-  .stats-block {
-    margin-left: 0;
-    margin-top: 0.5rem;
-  }
-  .app-container {
-    padding: 1.5rem;
-  }
-}
-
-/* Стили для заголовка с кнопкой плюс */
+/* ==================== СТИЛИ ДЛЯ СЕКЦИЙ С ПЛЮСОМ ==================== */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -689,21 +596,12 @@ body {
   line-height: 1;
   transition: transform 0.1s ease;
 }
-
 .add-icon-btn:hover {
   transform: scale(1.1);
   color: #0f3b5c;
 }
 
-/* Заглушка для картинки обуви */
-.shoe-card {
-  position: relative;
-}
-.shoe-card img {
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
-}
+/* ==================== ЗАГЛУШКА КАРТИНКИ ОБУВИ И ИНДИКАТОР РЕСУРСА ==================== */
 .shoe-image-placeholder {
   width: 70px;
   height: 70px;
@@ -716,10 +614,8 @@ body {
   text-align: center;
   border-radius: 8px;
 }
-
-/* Индикатор ресурса */
 .shoe-resource {
- margin-top: 0.5rem;
+  margin-top: 0.5rem;
   width: 100%;
   background: #e0e0e0;
   border-radius: 10px;
@@ -736,18 +632,18 @@ body {
 .resource-bar.yellow { background-color: #ffc107; }
 .resource-bar.red { background-color: #f44336; }
 .resource-text {
- font-size: 0.65rem;        
+  font-size: 0.65rem;
   text-align: center;
   display: block;
   margin-top: 0.3rem;
   color: var(--text-muted);
-  white-space: nowrap;       
+  white-space: nowrap;
   line-height: 1.2;
   padding: 0 0.2rem;
-  overflow: visible;     
+  overflow: visible;
 }
 
-/* Радиокнопки в модалке */
+/* ==================== РАДИОКНОПКИ И ПРЕВЬЮ В МОДАЛКЕ ОБУВИ ==================== */
 .radio-group {
   display: flex;
   gap: 1rem;
@@ -780,20 +676,7 @@ body {
   border-radius: 8px;
 }
 
-.main-nav {
-  display: flex;
-  gap: 1.5rem;
-}
-.main-nav a {
-  text-decoration: none;
-  color: var(--primary-blue);
-  font-weight: 500;
-}
-.main-nav a:hover {
-  text-decoration: underline;
-}
-
-/* ===== Страница статистики ===== */
+/* ==================== СТРАНИЦА СТАТИСТИКИ ==================== */
 .statistics-page {
   padding: 1rem 0;
 }
@@ -827,6 +710,7 @@ body {
   font-weight: 700;
   color: var(--primary-blue);
 }
+
 .aggregation-switch {
   display: flex;
   gap: 0.5rem;
@@ -847,6 +731,7 @@ body {
   color: white;
   border-color: var(--primary-blue);
 }
+
 .chart-container {
   background: white;
   padding: 1rem;
@@ -872,9 +757,164 @@ body {
     grid-template-columns: 1fr;
   }
 }
-
 .empty-message {
   text-align: center;
   color: var(--accent-silver);
   padding: 2rem 0;
+}
+
+/* ==================== СТРАНИЦА ВХОДА ==================== */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+.login-card {
+  background: white;
+  padding: 2rem 3rem;
+  border-radius: 2rem;
+  box-shadow: var(--card-shadow);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+.login-card h2 {
+  margin-bottom: 1.5rem;
+}
+.login-card form label {
+  display: block;
+  text-align: left;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+}
+.login-card form input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  margin-top: 0.2rem;
+}
+.login-card form button {
+  width: 100%;
+  padding: 0.7rem;
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+.login-hint {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--accent-silver);
+}
+
+/* ==================== СТРАНИЦА ПРОФИЛЯ ==================== */
+.profile-page {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.profile-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 2rem;
+  box-shadow: var(--card-shadow);
+}
+.profile-photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.profile-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+  border: 3px solid var(--primary-blue);
+}
+.photo-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.photo-actions button {
+  background: var(--silver-light);
+  border: none;
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.profile-form label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.profile-form input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  margin-top: 0.2rem;
+}
+.field-error {
+  color: #dc2626;
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 0.2rem;
+}
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.form-actions button {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.form-actions button[type="submit"] {
+  background: var(--primary-blue);
+  color: white;
+}
+.form-actions button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.form-actions button[type="button"] {
+  background: var(--silver-light);
+  color: var(--text-dark);
+}
+.logout-btn {
+  margin-top: 2rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  width: 100%;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ==================== АДАПТИВНОСТЬ ==================== */
+@media (max-width: 950px) {
+  .two-columns {
+    grid-template-columns: 1fr;
+  }
+  .stats-block {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  .app-container {
+    padding: 1.5rem;
+  }
 }
