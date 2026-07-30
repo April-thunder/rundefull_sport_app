@@ -1,3 +1,4 @@
+// src/components/AddWorkoutModal.jsx
 import { useState } from 'react';
 
 function AddWorkoutModal({ shoes, onClose, onAdd }) {
@@ -6,7 +7,7 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
   const [time, setTime] = useState('');
   const [mood, setMood] = useState('😐');
   const [shoeId, setShoeId] = useState(shoes[0]?.id || '');
-  const [selectedPreset, setSelectedPreset] = useState(''); // '10km' | 'half' | 'marathon'
+  const [selectedPreset, setSelectedPreset] = useState('');
 
   const presets = [
     { id: '10km', label: '10 км', value: 10 },
@@ -25,13 +26,8 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
   const handleDistanceChange = (e) => {
     const value = e.target.value;
     setDistance(value);
-    // Проверяем, совпадает ли введённая дистанция с одним из пресетов (с точностью до 0.01)
     const matched = presets.find(p => Math.abs(parseFloat(value) - p.value) < 0.01);
-    if (matched) {
-      setSelectedPreset(matched.id);
-    } else {
-      setSelectedPreset('');
-    }
+    setSelectedPreset(matched ? matched.id : '');
   };
 
   const handleSubmit = (e) => {
@@ -59,7 +55,7 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
       time,
       pace,
       mood,
-      shoe: selectedShoe ? selectedShoe.model : '',
+      shoe: selectedShoe ? `${selectedShoe.brand} ${selectedShoe.model}` : '', // <-- исправлено
       shoeId: parseInt(shoeId),
     };
     onAdd(newWorkout);
@@ -73,12 +69,7 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
         <form onSubmit={handleSubmit}>
           <label>
             Дата:
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
           </label>
 
           <div className="preset-group">
