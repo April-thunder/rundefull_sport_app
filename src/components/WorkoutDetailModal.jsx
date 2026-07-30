@@ -3,7 +3,7 @@ import EditWorkoutModal from './EditWorkoutModal';
 import mapImg from '../assets/road-map.png';
 import temp from '../assets/temp.png';
 import heartRate from '../assets/heart-rate.png';
-import { formatDate } from '../utils/dateUtils';
+import { formatDate, formatDistance } from '../utils/dateUtils';
 
 function WorkoutDetailModal({ workout, shoes, onClose, onUpdate, onDelete }) {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -40,7 +40,7 @@ function WorkoutDetailModal({ workout, shoes, onClose, onUpdate, onDelete }) {
             </div>
             <div className="detail-field">
               <span className="detail-label">Дистанция</span>
-              <span className="detail-value">{workout.distance} км</span>
+              <span className="detail-value">{formatDistance(workout.distance)} км</span>
             </div>
             <div className="detail-field">
               <span className="detail-label">Время</span>
@@ -75,17 +75,11 @@ function WorkoutDetailModal({ workout, shoes, onClose, onUpdate, onDelete }) {
             <div className="detail-charts-stack">
               <div className="chart">
                 <div className="chart-title">Темп по дистанции</div>
-                <img
-                  src={temp}
-                  alt="График темпа"
-                />
+                <img src={temp} alt="График темпа" />
               </div>
               <div className="chart">
                 <div className="chart-title">Пульс по дистанции</div>
-                <img
-                  src={heartRate}
-                  alt="График пульса"
-                />
+                <img src={heartRate} alt="График пульса" />
               </div>
             </div>
           </div>

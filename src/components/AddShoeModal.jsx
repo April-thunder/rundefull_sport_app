@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { shoeBrands, shoeModelsByBrand } from '../data/shoeModels';
 
-function AddShoeModal({ onClose, onAdd }) {
+function AddShoeModal({ shoes, onClose, onAdd }) {
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [customModel, setCustomModel] = useState('');
@@ -9,7 +9,6 @@ function AddShoeModal({ onClose, onAdd }) {
   const [useCustomModel, setUseCustomModel] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // При выборе бренда сбрасываем модель
   const handleBrandChange = (e) => {
     setBrand(e.target.value);
     setModel('');
@@ -17,24 +16,22 @@ function AddShoeModal({ onClose, onAdd }) {
     setImagePreview(null);
   };
 
-  // При выборе модели из списка
   const handleModelChange = (e) => {
     setModel(e.target.value);
     setCustomModel('');
-    // Попытка загрузить картинку: /shoes/бренд-модель.webp
     const imgPath = `/shoes/${brand.toLowerCase()}-${e.target.value.toLowerCase().replace(/ /g, '-')}.webp`;
     setImagePreview(imgPath);
   };
 
-  // При ручном вводе модели
   const handleCustomModelChange = (e) => {
     setCustomModel(e.target.value);
     setModel('');
-    setImagePreview(null); // заглушка
+    setImagePreview(null);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!brand) {
       alert('Выберите фирму');
       return;
@@ -49,6 +46,19 @@ function AddShoeModal({ onClose, onAdd }) {
       return;
     }
 
+    // Проверка на дубликат
+    if (Array.isArray(shoes) && shoes.length > 0) {
+      const isDuplicate = shoes.some(
+        (shoe) =>
+          shoe.brand.toLowerCase() === brand.toLowerCase() &&
+          shoe.model.toLowerCase() === finalModel.toLowerCase()
+      );
+      if (isDuplicate) {
+        alert(`Обувь "${brand} ${finalModel}" уже есть в списке.`);
+        return;
+      }
+    }
+
     const newShoe = {
       id: Date.now(),
       brand,
@@ -60,13 +70,19 @@ function AddShoeModal({ onClose, onAdd }) {
     onClose();
   };
 
-  // Заглушка картинки
   const renderImage = () => {
     if (imagePreview) {
-      return <img src={imagePreview} alt={model} className="shoe-preview" onError={() => setImagePreview(null)} />;
-    } else {
-      return <div className="shoe-preview-placeholder">Изображение добавлю позже</div>;
+      return (
+        <img
+          src={imagePreview}
+          alt={model}
+          className="shoe-preview"
+          onError={() => setImagePreview(null)}
+        />
+      );
     }
+    // Если imagePreview нет — ничего не показываем
+    return null;
   };
 
   const isBrandSelected = !!brand;
@@ -88,11 +104,21 @@ function AddShoeModal({ onClose, onAdd }) {
             <>
               <div className="radio-group">
                 <label>
-                  <input type="radio" name="modelType" checked={!useCustomModel} onChange={() => setUseCustomModel(false)} />
+                  <input
+                    type="radio"
+                    name="modelType"
+                    checked={!useCustomModel}
+                    onChange={() => setUseCustomModel(false)}
+                  />
                   Выбрать из списка
                 </label>
                 <label>
-                  <input type="radio" name="modelType" checked={useCustomModel} onChange={() => setUseCustomModel(true)} />
+                  <input
+                    type="radio"
+                    name="modelType"
+                    checked={useCustomModel}
+                    onChange={() => setUseCustomModel(true)}
+                  />
                   Ввести вручную
                 </label>
               </div>
@@ -108,7 +134,13 @@ function AddShoeModal({ onClose, onAdd }) {
               ) : (
                 <label>
                   Модель (вручную):
-                  <input type="text" value={customModel} onChange={handleCustomModelChange} placeholder="Введите модель" required={useCustomModel} />
+                  <input
+                    type="text"
+                    value={customModel}
+                    onChange={handleCustomModelChange}
+                    placeholder="Введите модель"
+                    required={useCustomModel}
+                  />
                 </label>
               )}
 
@@ -120,7 +152,13 @@ function AddShoeModal({ onClose, onAdd }) {
 
           <label>
             Максимальный пробег (км):
-            <input type="number" step="10" value={maxMileage} onChange={e => setMaxMileage(e.target.value)} required />
+            <input
+              type="number"
+              step="10"
+              value={maxMileage}
+              onChange={e => setMaxMileage(e.target.value)}
+              required
+            />
           </label>
 
           <div className="modal-buttons">

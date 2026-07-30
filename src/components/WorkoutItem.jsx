@@ -1,11 +1,14 @@
-import { formatDate } from '../utils/dateUtils';
+import { formatDate, formatDistance } from '../utils/dateUtils';
 
 function WorkoutItem({ workout, onClick }) {
   return (
     <li className="workout-tab" onClick={() => onClick(workout)}>
       <div className="workout-info">
-        <span className="date">{formatDate(workout.date)}</span>
-        <span className="distance">{workout.distance} км</span>
+        <span className="date">
+          {formatDate(workout.date)}
+          {workout.demo && <span className="demo-badge"> Демо</span>}
+        </span>
+        <span className="distance">{formatDistance(workout.distance)} км</span>
         <span>{workout.time}</span>
         <span className="pace">{workout.pace} мин/км</span>
         <span aria-label="Настроение">{workout.mood}</span>

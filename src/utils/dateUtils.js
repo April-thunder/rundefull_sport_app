@@ -38,3 +38,11 @@ export function parseRussianDateToISO(dateStr) {
   // Если не удалось распарсить – возвращаем исходную строку
   return dateStr;
 }
+
+/**
+ * Форматирует дистанцию: если целое число — без десятичных, иначе с одним знаком.
+ */
+export const formatDistance = (km) => {
+  if (typeof km !== 'number' || isNaN(km)) return '0';
+  return km % 1 === 0 ? km.toString() : km.toFixed(1);
+};

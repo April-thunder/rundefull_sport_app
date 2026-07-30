@@ -38,8 +38,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 0;
-  padding-bottom: 0;
   flex-wrap: wrap;
   gap: 1rem;
 }
@@ -52,7 +50,6 @@ body {
   -webkit-background-clip: text;
   color: transparent;
 }
-
 .logo-link {
   text-decoration: none;
   color: inherit;
@@ -561,18 +558,6 @@ body {
   }
 }
 
-/* ==================== ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ ==================== */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
-
 /* ==================== СТИЛИ ДЛЯ СЕКЦИЙ С ПЛЮСОМ ==================== */
 .section-header {
   display: flex;
@@ -601,7 +586,7 @@ body {
   color: #0f3b5c;
 }
 
-/* ==================== ЗАГЛУШКА КАРТИНКИ ОБУВИ И ИНДИКАТОР РЕСУРСА ==================== */
+/* ==================== ОБУВЬ: ЗАГЛУШКА И РЕСУРС ==================== */
 .shoe-image-placeholder {
   width: 70px;
   height: 70px;
@@ -643,7 +628,7 @@ body {
   overflow: visible;
 }
 
-/* ==================== РАДИОКНОПКИ И ПРЕВЬЮ В МОДАЛКЕ ОБУВИ ==================== */
+/* ==================== РАДИОКНОПКИ В МОДАЛКЕ ОБУВИ ==================== */
 .radio-group {
   display: flex;
   gap: 1rem;
@@ -655,25 +640,53 @@ body {
   gap: 0.3rem;
   font-weight: normal;
 }
+
 .image-preview {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 0.8rem;
-  text-align: center;
 }
 .shoe-preview {
   max-width: 100px;
   max-height: 100px;
   object-fit: contain;
 }
-.shoe-preview-placeholder {
-  width: 100px;
-  height: 100px;
-  background: #f0f0f0;
+
+/* ===== Пресеты дистанций в модалке ===== */
+.preset-group {
+  margin-bottom: 1rem;
+}
+.preset-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+.preset-options {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.preset-option {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  color: #666;
-  border-radius: 8px;
+  gap: 0.3rem;
+  font-weight: normal;
+  cursor: pointer;
+  background: var(--silver-light);
+  padding: 0.2rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  transition: 0.2s;
+}
+.preset-option:hover {
+  border-color: var(--primary-blue);
+}
+.preset-option input[type="radio"] {
+  width: auto;
+  margin: 0;
 }
 
 /* ==================== СТРАНИЦА СТАТИСТИКИ ==================== */
@@ -905,6 +918,18 @@ body {
   cursor: pointer;
 }
 
+/* ==================== ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ ==================== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 /* ==================== АДАПТИВНОСТЬ ==================== */
 @media (max-width: 950px) {
   .two-columns {
@@ -917,4 +942,15 @@ body {
   .app-container {
     padding: 1.5rem;
   }
+}
+
+.demo-badge {
+  background: #ffc107;
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
+  margin-left: 0.3rem;
+  text-transform: uppercase;
 }

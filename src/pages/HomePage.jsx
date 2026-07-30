@@ -121,11 +121,12 @@ function HomePage() {
         />
       )}
       {modal?.type === 'addShoe' && (
-        <AddShoeModal
-          onClose={closeModal}
-          onAdd={addShoe}
-        />
-      )}
+  <AddShoeModal
+    shoes={shoes}   
+    onClose={closeModal}
+    onAdd={addShoe}
+  />
+)}
     </>
   );
 }

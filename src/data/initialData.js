@@ -1,12 +1,14 @@
 export const initialWorkouts = [
   {
     id: 1,
-    date: "2025-04-16",   // было "16 апр 2025"
+    date: "2025-04-16",
     distance: 12,
     time: "1:02:30",
     pace: "5:12",
     mood: "😁",
-    shoe: "Nike VF",
+    shoe: "Nike Pegasus 40",
+    shoeId: 1,
+    demo: true,
   },
   {
     id: 2,
@@ -15,7 +17,9 @@ export const initialWorkouts = [
     time: "44:20",
     pace: "5:32",
     mood: "🙂",
-    shoe: "Adidas SL",
+    shoe: "Adidas Adios 7",
+    shoeId: 2,
+    demo: true,
   },
   {
     id: 3,
@@ -24,14 +28,16 @@ export const initialWorkouts = [
     time: "1:48:10",
     pace: "5:07",
     mood: "😄",
-    shoe: "Hoka Mach",
+    shoe: "Hoka Clifton 9",
+    shoeId: 3,
+    demo: true,
   },
 ];
 
 export const initialShoes = [
-  { id: 1, model: 'Pegasus 40', brand: 'Nike', mileage: 245, maxMileage: 800 },
-  { id: 2, model: 'Adios 7', brand: 'Adidas', mileage: 98, maxMileage: 800 },
-  { id: 3, model: 'Clifton 9', brand: 'Hoka', mileage: 312, maxMileage: 800 },
+  { id: 1, model: 'Pegasus 40', brand: 'Nike', mileage: 12, maxMileage: 800 },
+  { id: 2, model: 'Adios 7', brand: 'Adidas', mileage: 8, maxMileage: 800 },
+  { id: 3, model: 'Clifton 9', brand: 'Hoka', mileage: 21.1, maxMileage: 800 },
 ];
 
 export const initialUser = {
