@@ -88,25 +88,27 @@ function HomePage() { //это функциональный компонент. 
             <button className="add-icon-btn" onClick={openAddWorkout}>+</button>
           </div>
 
-          <WorkoutList
-            workouts={currentWorkouts}
-            onWorkoutClick={openDetailWorkout}
+          <WorkoutList //компонент списка тренировок
+            workouts={currentWorkouts} //тренировки для текущей страницы
+            onWorkoutClick={openDetailWorkout} //функция, которая будет вызвана при клике на тренировку (откроет детали).
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={goToPage}
             onPrevPage={goToPrevPage}
             onNextPage={goToNextPage}
           />
-
-          <ShoesSection shoes={shoes} onAddShoe={openAddShoe} />
+{/* блок обуви. Ему передаются все пары обуви (shoes) и функция открытия модалки добавления обуви. */}
+          <ShoesSection shoes={shoes} onAddShoe={openAddShoe} /> 
         </section>
 
         <section className="right-column" aria-label="Соревнования и рекорды">
-          <RaceSection />
+          {/* соревнования (статичные) */}
+          <RaceSection /> 
+          {/* рекорды (вычисляются внутри на основе тренировок)*/}
           <RecordsList />
         </section>
       </div>
-
+{/* Условный рендеринг модалок */}
       {modal?.type === 'add' && (
         <AddWorkoutModal
           shoes={shoes}
