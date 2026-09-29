@@ -108,7 +108,15 @@ function HomePage() { //это функциональный компонент. 
           <RecordsList />
         </section>
       </div>
-{/* Условный рендеринг модалок */}
+{/* Условный рендеринг модалок 
+modal?.type — это опциональная цепочка (optional chaining). Если modal равен null или undefined, то выражение modal?.type вернёт undefined, и условие не выполнится.
+Если modal.type === 'add' — отрендерится AddWorkoutModal с пропсами.
+Если modal.type === 'edit' — отрендерится EditWorkoutModal, и в пропсе workout передаётся modal.data.
+Если modal.type === 'detail' — отрендерится WorkoutDetailModal.
+Если modal.type === 'addShoe' — отрендерится AddShoeModal.
+Каждая модалка получает:
+onClose={closeModal} — функция закрытия.
+Необходимые данные (список обуви, данные тренировки, функции обновления/удаления). */}
       {modal?.type === 'add' && (
         <AddWorkoutModal
           shoes={shoes}
@@ -143,5 +151,5 @@ function HomePage() { //это функциональный компонент. 
     </>
   );
 }
-
+// Экспортируем компонент, чтобы его можно было импортировать в других файлах (например, в App.jsx).
 export default HomePage;
