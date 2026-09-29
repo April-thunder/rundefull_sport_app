@@ -1,6 +1,12 @@
 import { formatDate, formatDistance } from '../utils/dateUtils';
+import type { Workout } from '../types';
 
-function WorkoutItem({ workout, onClick }) {
+interface WorkoutItemProps {
+  workout: Workout;
+  onClick: (workout: Workout) => void;
+}
+
+function WorkoutItem({ workout, onClick }: WorkoutItemProps) {
   return (
     <li className="workout-tab" onClick={() => onClick(workout)}>
       <div className="workout-info">
