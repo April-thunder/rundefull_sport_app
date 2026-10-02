@@ -31,3 +31,5 @@ export interface User {
   goal: string;
   photo: string | null;  // base64-строка или null
 }
+
+export type Period = 'week' | 'month' | 'year' | 'all';
