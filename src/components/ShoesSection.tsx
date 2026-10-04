@@ -1,8 +1,14 @@
 import { formatDistance } from '../utils/dateUtils';
+import type { Shoe } from '../types';
 
-function ShoesSection({ shoes, onAddShoe }) {
+interface ShoesSectionProps {
+  shoes: Shoe[];
+  onAddShoe: () => void;
+}
+
+function ShoesSection({ shoes, onAddShoe }: ShoesSectionProps) {
   // Функция определения цвета индикатора ресурса
-  const getResourceColor = (mileage, maxMileage) => {
+  const getResourceColor = (mileage: number, maxMileage: number): string => {
     if (!maxMileage) return 'green';
     const percent = (mileage / maxMileage) * 100;
     if (percent >= 90) return 'red';
@@ -18,8 +24,10 @@ function ShoesSection({ shoes, onAddShoe }) {
       </div>
 
       <ul className="shoe-grid">
-        {shoes.map(shoe => {
-          const resourcePercent = shoe.maxMileage ? (shoe.mileage / shoe.maxMileage) * 100 : 0;
+        {shoes.map((shoe) => {
+          const resourcePercent = shoe.maxMileage
+            ? (shoe.mileage / shoe.maxMileage) * 100
+            : 0;
           const colorClass = getResourceColor(shoe.mileage, shoe.maxMileage);
           const imgPath = `/shoes/${shoe.brand?.toLowerCase()}-${shoe.model?.toLowerCase().replace(/ /g, '-')}.webp`;
 
@@ -30,8 +38,8 @@ function ShoesSection({ shoes, onAddShoe }) {
                 alt={shoe.model}
                 style={{ width: '70px', height: '70px', objectFit: 'contain' }}
                 onError={(e) => {
-                  e.target.style.display = 'none';
-                  const placeholder = e.target.nextElementSibling;
+                  e.currentTarget.style.display = 'none';
+                  const placeholder = e.currentTarget.nextElementSibling as HTMLElement | null;
                   if (placeholder) placeholder.style.display = 'flex';
                 }}
               />
