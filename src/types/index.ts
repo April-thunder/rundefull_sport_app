@@ -33,3 +33,11 @@ export interface User {
 }
 
 export type Period = 'week' | 'month' | 'year' | 'all';
+
+export type PresetId = '10km' | 'half' | 'marathon';
+
+export interface WorkoutPreset {
+  id: PresetId;
+  label: string;
+  value: number;
+}

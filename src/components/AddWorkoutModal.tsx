@@ -1,36 +1,45 @@
-// src/components/AddWorkoutModal.jsx
 import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import type { Shoe, Workout, PresetId, WorkoutPreset } from '../types';
 
-function AddWorkoutModal({ shoes, onClose, onAdd }) {
-  const [date, setDate] = useState('');
-  const [distance, setDistance] = useState('');
-  const [time, setTime] = useState('');
-  const [mood, setMood] = useState('😐');
-  const [shoeId, setShoeId] = useState(shoes[0]?.id || '');
-  const [selectedPreset, setSelectedPreset] = useState('');
+interface AddWorkoutModalProps {
+  shoes: Shoe[];
+  onClose: () => void;
+  onAdd: (workout: Workout) => void;
+}
 
-  const presets = [
+function AddWorkoutModal({ shoes, onClose, onAdd }: AddWorkoutModalProps) {
+  const [date, setDate] = useState<string>('');
+  const [distance, setDistance] = useState<string>('');
+  const [time, setTime] = useState<string>('');
+  const [mood, setMood] = useState<string>('😐');
+  const [shoeId, setShoeId] = useState<number>(shoes[0]?.id || 0);
+  const [selectedPreset, setSelectedPreset] = useState<PresetId | ''>('');
+
+  const presets: WorkoutPreset[] = [
     { id: '10km', label: '10 км', value: 10 },
     { id: 'half', label: 'Полумарафон', value: 21.0975 },
     { id: 'marathon', label: 'Марафон', value: 42.195 },
   ];
 
-  const handlePresetChange = (presetId) => {
+  const handlePresetChange = (presetId: PresetId) => {
     setSelectedPreset(presetId);
-    const preset = presets.find(p => p.id === presetId);
+    const preset = presets.find((p) => p.id === presetId);
     if (preset) {
       setDistance(preset.value.toString());
     }
   };
 
-  const handleDistanceChange = (e) => {
+  const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setDistance(value);
-    const matched = presets.find(p => Math.abs(parseFloat(value) - p.value) < 0.01);
+    const matched = presets.find(
+      (p) => Math.abs(parseFloat(value) - p.value) < 0.01
+    );
     setSelectedPreset(matched ? matched.id : '');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Расчёт темпа: время в минутах / дистанция
@@ -47,17 +56,25 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
     }
     const pace = (totalMinutes / parseFloat(distance)).toFixed(2);
 
-    const selectedShoe = shoes.find(shoe => shoe.id === parseInt(shoeId));
-    const newWorkout = {
+    const selectedShoe = shoes.find((shoe) => shoe.id === shoeId);
+    let fullShoeName = '';
+    if (selectedShoe) {
+      fullShoeName = selectedShoe.brand
+        ? `${selectedShoe.brand} ${selectedShoe.model}`
+        : selectedShoe.model;
+    }
+
+    const newWorkout: Workout = {
       id: Date.now(),
       date,
       distance: parseFloat(distance),
       time,
       pace,
       mood,
-      shoe: selectedShoe ? `${selectedShoe.brand} ${selectedShoe.model}` : '', // <-- исправлено
-      shoeId: parseInt(shoeId),
+      shoe: fullShoeName,
+      shoeId,
     };
+
     onAdd(newWorkout);
     onClose();
   };
@@ -69,7 +86,12 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
         <form onSubmit={handleSubmit}>
           <label>
             Дата:
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
           </label>
 
           <div className="preset-group">
@@ -122,7 +144,10 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
 
           <label>
             Обувь:
-            <select value={shoeId} onChange={(e) => setShoeId(e.target.value)}>
+            <select
+              value={shoeId}
+              onChange={(e) => setShoeId(parseInt(e.target.value, 10))}
+            >
               {shoes.map((shoe) => (
                 <option key={shoe.id} value={shoe.id}>
                   {shoe.brand} {shoe.model} (пробег: {shoe.mileage} км)
@@ -133,7 +158,9 @@ function AddWorkoutModal({ shoes, onClose, onAdd }) {
 
           <div className="modal-buttons">
             <button type="submit">Сохранить</button>
-            <button type="button" onClick={onClose}>Отмена</button>
+            <button type="button" onClick={onClose}>
+              Отмена
+            </button>
           </div>
         </form>
       </div>
