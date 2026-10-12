@@ -1,48 +1,55 @@
 import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import type { Shoe, Workout, PresetId, WorkoutPreset } from '../types';
 
-function EditWorkoutModal({ workout, shoes, onClose, onUpdate }) {
-  const [date, setDate] = useState(workout.date);
-  const [distance, setDistance] = useState(workout.distance);
-  const [time, setTime] = useState(workout.time);
-  const [mood, setMood] = useState(workout.mood);
-  const [shoeId, setShoeId] = useState(workout.shoeId || (shoes[0]?.id || ''));
-  const [selectedPreset, setSelectedPreset] = useState('');
+interface EditWorkoutModalProps {
+  workout: Workout;
+  shoes: Shoe[];
+  onClose: () => void;
+  onUpdate: (workout: Workout) => void;
+}
 
-  const presets = [
+function EditWorkoutModal({ workout, shoes, onClose, onUpdate }: EditWorkoutModalProps) {
+  const [date, setDate] = useState<string>(workout.date);
+  const [distance, setDistance] = useState<string>(workout.distance.toString());
+  const [time, setTime] = useState<string>(workout.time);
+  const [mood, setMood] = useState<string>(workout.mood);
+  const [shoeId, setShoeId] = useState<number>(workout.shoeId || shoes[0]?.id || 0);
+
+  const presets: WorkoutPreset[] = [
     { id: '10km', label: '10 км', value: 10 },
     { id: 'half', label: 'Полумарафон', value: 21.0975 },
     { id: 'marathon', label: 'Марафон', value: 42.195 },
   ];
 
-  // При монтировании проверяем, соответствует ли дистанция одному из пресетов
-  useState(() => {
-    const matched = presets.find(p => Math.abs(workout.distance - p.value) < 0.01);
-    if (matched) {
-      setSelectedPreset(matched.id);
-    }
-  }, []); // пустой массив зависимостей, чтобы выполнить только при монтировании
+  // Определяем, соответствует ли текущая дистанция одному из пресетов
+  const matchedPreset = presets.find(
+    (p) => Math.abs(workout.distance - p.value) < 0.01
+  );
+  const [selectedPreset, setSelectedPreset] = useState<PresetId | ''>(
+    matchedPreset ? matchedPreset.id : ''
+  );
 
-  const handlePresetChange = (presetId) => {
+  const handlePresetChange = (presetId: PresetId) => {
     setSelectedPreset(presetId);
-    const preset = presets.find(p => p.id === presetId);
+    const preset = presets.find((p) => p.id === presetId);
     if (preset) {
       setDistance(preset.value.toString());
     }
   };
 
-  const handleDistanceChange = (e) => {
+  const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setDistance(value);
-    const matched = presets.find(p => Math.abs(parseFloat(value) - p.value) < 0.01);
-    if (matched) {
-      setSelectedPreset(matched.id);
-    } else {
-      setSelectedPreset('');
-    }
+    const matched = presets.find(
+      (p) => Math.abs(parseFloat(value) - p.value) < 0.01
+    );
+    setSelectedPreset(matched ? matched.id : '');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     let totalMinutes = 0;
     if (time.includes(':')) {
       const parts = time.split(':');
@@ -56,17 +63,25 @@ function EditWorkoutModal({ workout, shoes, onClose, onUpdate }) {
     }
     const pace = (totalMinutes / parseFloat(distance)).toFixed(2);
 
-    const selectedShoe = shoes.find(shoe => shoe.id === parseInt(shoeId));
-    const updatedWorkout = {
+    const selectedShoe = shoes.find((shoe) => shoe.id === shoeId);
+    let fullShoeName = '';
+    if (selectedShoe) {
+      fullShoeName = selectedShoe.brand
+        ? `${selectedShoe.brand} ${selectedShoe.model}`
+        : selectedShoe.model;
+    }
+
+    const updatedWorkout: Workout = {
       ...workout,
       date,
       distance: parseFloat(distance),
       time,
       pace,
       mood,
-      shoe: selectedShoe ? `${selectedShoe.brand} ${selectedShoe.model}` : '',
-      shoeId: parseInt(shoeId),
+      shoe: fullShoeName,
+      shoeId,
     };
+
     onUpdate(updatedWorkout);
     onClose();
   };
@@ -78,7 +93,12 @@ function EditWorkoutModal({ workout, shoes, onClose, onUpdate }) {
         <form onSubmit={handleSubmit}>
           <label>
             Дата:
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
           </label>
 
           <div className="preset-group">
@@ -112,20 +132,30 @@ function EditWorkoutModal({ workout, shoes, onClose, onUpdate }) {
 
           <label>
             Время (ч:мм:сс или мм:сс):
-            <input value={time} onChange={e => setTime(e.target.value)} required />
+            <input
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              required
+            />
           </label>
 
           <label>
             Самочувствие:
-            <select value={mood} onChange={e => setMood(e.target.value)}>
-              <option>😁</option><option>🙂</option><option>😐</option><option>😔</option>
+            <select value={mood} onChange={(e) => setMood(e.target.value)}>
+              <option>😁</option>
+              <option>🙂</option>
+              <option>😐</option>
+              <option>😔</option>
             </select>
           </label>
 
           <label>
             Обувь:
-            <select value={shoeId} onChange={e => setShoeId(e.target.value)}>
-              {shoes.map(shoe => (
+            <select
+              value={shoeId}
+              onChange={(e) => setShoeId(parseInt(e.target.value, 10))}
+            >
+              {shoes.map((shoe) => (
                 <option key={shoe.id} value={shoe.id}>
                   {shoe.brand} {shoe.model} (пробег: {shoe.mileage} км)
                 </option>
@@ -135,7 +165,9 @@ function EditWorkoutModal({ workout, shoes, onClose, onUpdate }) {
 
           <div className="modal-buttons">
             <button type="submit">Сохранить</button>
-            <button type="button" onClick={onClose}>Отмена</button>
+            <button type="button" onClick={onClose}>
+              Отмена
+            </button>
           </div>
         </form>
       </div>
