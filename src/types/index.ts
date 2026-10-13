@@ -10,6 +10,8 @@ export interface Workout {
   shoe: string;        // полное название: "Nike Pegasus 40"
   shoeId: number;
   demo?: boolean;      // опциональное поле — только у демо-тренировок
+  avgHeartRate?: number;
+  maxHeartRate?: number;
 }
 
 export interface Shoe {

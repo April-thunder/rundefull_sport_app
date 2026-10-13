@@ -4,9 +4,24 @@ import mapImg from '../assets/road-map.png';
 import temp from '../assets/temp.png';
 import heartRate from '../assets/heart-rate.png';
 import { formatDate, formatDistance } from '../utils/dateUtils';
+import type { Workout, Shoe } from '../types';
 
-function WorkoutDetailModal({ workout, shoes, onClose, onUpdate, onDelete }) {
-  const [showEditModal, setShowEditModal] = useState(false);
+interface WorkoutDetailModalProps {
+  workout: Workout;
+  shoes: Shoe[];
+  onClose: () => void;
+  onUpdate: (workout: Workout) => void;
+  onDelete: (id: number) => void;
+}
+
+function WorkoutDetailModal({
+  workout,
+  shoes,
+  onClose,
+  onUpdate,
+  onDelete,
+}: WorkoutDetailModalProps) {
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
 
   const handleEdit = () => {
     setShowEditModal(true);
