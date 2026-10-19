@@ -11,6 +11,17 @@ import AddWorkoutModal from '../components/AddWorkoutModal';
 import EditWorkoutModal from '../components/EditWorkoutModal';
 import WorkoutDetailModal from '../components/WorkoutDetailModal';
 import AddShoeModal from '../components/AddShoeModal';
+import type { Workout } from '../types'; // импортируем тип тренировки — он нужен для discriminated union модалок.
+
+// Discriminated union: описывает все возможные состояния модалки.
+// Один из вариантов или null (ничего не открыто).
+// Благодаря этому TS точно знает: если modal.type === 'edit', то modal.data существует.
+type ModalState =
+  | { type: 'add' }
+  | { type: 'edit'; data: Workout }
+  | { type: 'detail'; data: Workout }
+  | { type: 'addShoe' }
+  | null;
 
 function HomePage() { //это функциональный компонент. Он принимает пропсы (здесь их нет, всё берётся из контекста).
   const {
@@ -26,15 +37,17 @@ function HomePage() { //это функциональный компонент. 
   } = useApp(); //возвращает объект с данными и функциями. Мы деструктурируем его, чтобы получить нужные поля
 
   // Модалки (единое состояние)
-  const [modal, setModal] = useState(null); // useState — хук для создания локального состояния.
-// modal — текущее состояние модального окна. Изначально null (ничего не открыто).
-// setModal — функция для изменения этого состояния.
+  const [modal, setModal] = useState<ModalState>(null); // useState — хук для создания локального состояния.
+  // modal — текущее состояние модального окна. Изначально null (ничего не открыто).
+  // setModal — функция для изменения этого состояния.
+  // <ModalState> — явный тип: TS не даст положить в modal что-то не из наших вариантов.
 
   // Пагинация (для всех тренировок)
-  const [currentPage, setCurrentPage] = useState(1); // currentPage — номер текущей страницы (по умолчанию 1).
+  const [currentPage, setCurrentPage] = useState<number>(1); // currentPage — номер текущей страницы (по умолчанию 1). Явно указали, что число.
   const workoutsPerPage = 3; //workoutsPerPage — сколько тренировок на одной странице (3).
-  const sortedWorkouts = [...workouts].sort((a, b) => new Date(b.date) - new Date(a.date)); //создаётся копия массива workouts ([...workouts]), затем сортируется по дате (от новых к старым). 
+  const sortedWorkouts = [...workouts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); //создаётся копия массива workouts ([...workouts]), затем сортируется по дате (от новых к старым).
   //Важно: sort мутирует массив, поэтому мы сначала создаём копию.
+  // .getTime() — потому что TS не разрешает вычитать объекты Date напрямую, нужны числа (мс).
   const indexOfLastWorkout = currentPage * workoutsPerPage; //индексы для slice.
   const indexOfFirstWorkout = indexOfLastWorkout - workoutsPerPage;
   const currentWorkouts = sortedWorkouts.slice(indexOfFirstWorkout, indexOfLastWorkout); //подмассив тренировок для текущей страницы.
@@ -53,14 +66,13 @@ function HomePage() { //это функциональный компонент. 
   const goToPrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
-  const goToPage = (page) => setCurrentPage(page);
-
+  const goToPage = (page: number) => setCurrentPage(page); // параметр page теперь типизирован как number — TS не даст передать строку.
 
   //Эти функции изменяют состояние modal. Вместо передачи данных напрямую мы передаём объект с типом и (если нужно) данными.
-//Например, при открытии деталей тренировки мы передаём объект тренировки в поле data.
-//При закрытии устанавливаем null, чтобы модалка исчезла.
+  //Например, при открытии деталей тренировки мы передаём объект тренировки в поле data.
+  //При закрытии устанавливаем null, чтобы модалка исчезла.
   const openAddWorkout = () => setModal({ type: 'add' });
-  const openDetailWorkout = (workout) => setModal({ type: 'detail', data: workout });
+  const openDetailWorkout = (workout: Workout) => setModal({ type: 'detail', data: workout }); // тренировка должна быть типа Workout.
   const openAddShoe = () => setModal({ type: 'addShoe' });
   const closeModal = () => setModal(null);
 
@@ -69,11 +81,11 @@ function HomePage() { //это функциональный компонент. 
     <>
       <section className="user-stats-row" aria-label="Информация о пользователе и статистика">
         {/* ниже компоненты, которые сами получают данные из контекста (они используют useApp() внутри). */}
-        <UserCard /> 
+        <UserCard />
         <UserDetails />
         <StatsPanel
-        // получает пропсы: количество тренировок, дистанцию, текущий период и функцию для его изменения. 
-        // Это пример управляемого компонента — он получает данные от родителя и сообщает об изменениях через колбэк.
+          // получает пропсы: количество тренировок, дистанцию, текущий период и функцию для его изменения.
+          // Это пример управляемого компонента — он получает данные от родителя и сообщает об изменениях через колбэк.
           totalWorkouts={filteredTotalWorkouts}
           totalDistance={filteredTotalDistance}
           period={period}
@@ -97,18 +109,18 @@ function HomePage() { //это функциональный компонент. 
             onPrevPage={goToPrevPage}
             onNextPage={goToNextPage}
           />
-{/* блок обуви. Ему передаются все пары обуви (shoes) и функция открытия модалки добавления обуви. */}
-          <ShoesSection shoes={shoes} onAddShoe={openAddShoe} /> 
+          {/* блок обуви. Ему передаются все пары обуви (shoes) и функция открытия модалки добавления обуви. */}
+          <ShoesSection shoes={shoes} onAddShoe={openAddShoe} />
         </section>
 
         <section className="right-column" aria-label="Соревнования и рекорды">
           {/* соревнования (статичные) */}
-          <RaceSection /> 
+          <RaceSection />
           {/* рекорды (вычисляются внутри на основе тренировок)*/}
           <RecordsList />
         </section>
       </div>
-{/* Условный рендеринг модалок 
+      {/* Условный рендеринг модалок
 modal?.type — это опциональная цепочка (optional chaining). Если modal равен null или undefined, то выражение modal?.type вернёт undefined, и условие не выполнится.
 Если modal.type === 'add' — отрендерится AddWorkoutModal с пропсами.
 Если modal.type === 'edit' — отрендерится EditWorkoutModal, и в пропсе workout передаётся modal.data.
@@ -116,7 +128,8 @@ modal?.type — это опциональная цепочка (optional chainin
 Если modal.type === 'addShoe' — отрендерится AddShoeModal.
 Каждая модалка получает:
 onClose={closeModal} — функция закрытия.
-Необходимые данные (список обуви, данные тренировки, функции обновления/удаления). */}
+Необходимые данные (список обуви, данные тренировки, функции обновления/удаления).
+ВАЖНО: благодаря discriminated union TS сам понимает, что при type === 'edit' у modal есть data. Поэтому `modal.data` не подсвечивается как ошибка. */}
       {modal?.type === 'add' && (
         <AddWorkoutModal
           shoes={shoes}
@@ -142,12 +155,12 @@ onClose={closeModal} — функция закрытия.
         />
       )}
       {modal?.type === 'addShoe' && (
-  <AddShoeModal
-    shoes={shoes}   
-    onClose={closeModal}
-    onAdd={addShoe}
-  />
-)}
+        <AddShoeModal
+          shoes={shoes}
+          onClose={closeModal}
+          onAdd={addShoe}
+        />
+      )}
     </>
   );
 }

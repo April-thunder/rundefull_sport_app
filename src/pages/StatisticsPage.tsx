@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import type { PieLabelRenderProps } from 'recharts';
 import { useApp } from '../hooks/useApp';
 import {
   BarChart,
@@ -18,21 +19,39 @@ import {
 
 const COLORS = ['#1e4a76', '#2c6e9e', '#4a8db7', '#7ab0d4', '#a8cce0', '#c9dce8'];
 
+// Тип для группировки
+type Aggregation = 'years' | 'months' | 'weeks' | 'days';
+
+// Точка на графике объёма/темпа
+interface AggregatedPoint {
+  key: string;
+  totalDistance: number;
+  totalTime: number;
+  count: number;
+  avgPace: number;
+}
+
+// Точка на круговой диаграмме
+interface PiePoint {
+  name: string;
+  value: number;
+}
+
 function StatisticsPage() {
   const { workouts, shoes } = useApp();
-  const [aggregation, setAggregation] = useState('months');
+  const [aggregation, setAggregation] = useState<Aggregation>('months');
 
   // ------ 1. Агрегация данных для графиков ------
-  const aggregatedData = useMemo(() => {
+  const aggregatedData = useMemo<AggregatedPoint[]>(() => {
     if (!workouts || workouts.length === 0) return [];
 
-    const groups = {};
+    const groups: Record<string, AggregatedPoint> = {};
 
     workouts.forEach((w) => {
       const date = new Date(w.date);
-      if (isNaN(date.getTime())) return; // защита от некорректной даты
+      if (isNaN(date.getTime())) return;
 
-      let key;
+      let key: string;
       switch (aggregation) {
         case 'years':
           key = date.getFullYear().toString();
@@ -41,7 +60,7 @@ function StatisticsPage() {
           key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
           break;
         case 'weeks': {
-          const d = new Date(date); // копируем, чтобы не мутировать
+          const d = new Date(date);
           const day = d.getDay();
           const diff = d.getDate() - day + (day === 0 ? -6 : 1);
           d.setDate(diff);
@@ -57,12 +76,11 @@ function StatisticsPage() {
       }
 
       if (!groups[key]) {
-        groups[key] = { key, totalDistance: 0, totalTime: 0, count: 0 };
+        groups[key] = { key, totalDistance: 0, totalTime: 0, count: 0, avgPace: 0 };
       }
       groups[key].totalDistance += w.distance;
       groups[key].count += 1;
 
-      // парсим время
       const timeStr = w.time;
       let minutes = 0;
       if (timeStr && timeStr.includes(':')) {
@@ -77,16 +95,16 @@ function StatisticsPage() {
 
     const result = Object.values(groups).map((g) => ({
       ...g,
-      avgPace: g.totalDistance > 0 ? (g.totalTime / g.totalDistance) : 0,
+      avgPace: g.totalDistance > 0 ? g.totalTime / g.totalDistance : 0,
     }));
     result.sort((a, b) => a.key.localeCompare(b.key));
     return result;
   }, [workouts, aggregation]);
 
   // ------ 2. Распределение по дистанциям ------
-  const distanceDistribution = useMemo(() => {
+  const distanceDistribution = useMemo<PiePoint[]>(() => {
     if (!workouts || workouts.length === 0) return [];
-    const categories = {
+    const categories: Record<string, number> = {
       'до 5 км': 0,
       '5–10 км': 0,
       '10–15 км': 0,
@@ -107,7 +125,7 @@ function StatisticsPage() {
   }, [workouts]);
 
   // ------ 3. Распределение пробега по обуви ------
-  const shoeDistribution = useMemo(() => {
+  const shoeDistribution = useMemo<PiePoint[]>(() => {
     if (!shoes || shoes.length === 0) return [];
     return shoes.map((shoe) => ({
       name: `${shoe.brand} ${shoe.model}`,
@@ -118,14 +136,22 @@ function StatisticsPage() {
   // ------ 4. Общие метрики ------
   const totalDistance = workouts.reduce((sum, w) => sum + w.distance, 0);
   const totalWorkouts = workouts.length;
-  const avgPace = totalDistance > 0 ? (workouts.reduce((sum, w) => sum + parseFloat(w.pace || 0), 0) / totalWorkouts) : 0;
+  const avgPace = totalDistance > 0
+    ? workouts.reduce((sum, w) => sum + parseFloat(w.pace || '0'), 0) / totalWorkouts
+    : 0;
   const avgDistance = totalWorkouts > 0 ? totalDistance / totalWorkouts : 0;
+
+  // Безопасный рендер подписи
+  const renderPieLabel = (props: PieLabelRenderProps): string => {
+    const name = String(props.name ?? '');
+    const percent = Number(props.percent ?? 0);
+    return `${name}: ${(percent * 100).toFixed(0)}%`;
+  };
 
   return (
     <div className="statistics-page">
       <h2 className="page-title">Статистика</h2>
 
-      {/* Карточки метрик */}
       <div className="stats-cards">
         <div className="stat-card">
           <span className="stat-card-label">Всего км</span>
@@ -145,35 +171,21 @@ function StatisticsPage() {
         </div>
       </div>
 
-      {/* Переключатель агрегации */}
       <div className="aggregation-switch">
-        <button
-          className={aggregation === 'years' ? 'active' : ''}
-          onClick={() => setAggregation('years')}
-        >
-          Годы
-        </button>
-        <button
-          className={aggregation === 'months' ? 'active' : ''}
-          onClick={() => setAggregation('months')}
-        >
-          Месяцы
-        </button>
-        <button
-          className={aggregation === 'weeks' ? 'active' : ''}
-          onClick={() => setAggregation('weeks')}
-        >
-          Недели
-        </button>
-        <button
-          className={aggregation === 'days' ? 'active' : ''}
-          onClick={() => setAggregation('days')}
-        >
-          Дни
-        </button>
+        {(['years', 'months', 'weeks', 'days'] as Aggregation[]).map((a) => (
+          <button
+            key={a}
+            className={aggregation === a ? 'active' : ''}
+            onClick={() => setAggregation(a)}
+          >
+            {a === 'years' && 'Годы'}
+            {a === 'months' && 'Месяцы'}
+            {a === 'weeks' && 'Недели'}
+            {a === 'days' && 'Дни'}
+          </button>
+        ))}
       </div>
 
-      {/* График объёма */}
       <div className="chart-container">
         <h3>Пробег по периодам</h3>
         <ResponsiveContainer width="100%" height={300}>
@@ -188,7 +200,6 @@ function StatisticsPage() {
         </ResponsiveContainer>
       </div>
 
-      {/* График темпа */}
       <div className="chart-container">
         <h3>Средний темп по периодам</h3>
         <ResponsiveContainer width="100%" height={250}>
@@ -203,7 +214,6 @@ function StatisticsPage() {
         </ResponsiveContainer>
       </div>
 
-      {/* Круговые диаграммы */}
       <div className="charts-row">
         <div className="chart-container half">
           <h3>Распределение по дистанциям</h3>
@@ -215,12 +225,12 @@ function StatisticsPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={renderPieLabel}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {distanceDistribution.map((entry, index) => (
+                  {distanceDistribution.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -234,7 +244,7 @@ function StatisticsPage() {
 
         <div className="chart-container half">
           <h3>Пробег по обуви</h3>
-          {shoeDistribution.some(item => item.value > 0) ? (
+          {shoeDistribution.some((item) => item.value > 0) ? (
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
@@ -242,12 +252,12 @@ function StatisticsPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={renderPieLabel}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {shoeDistribution.map((entry, index) => (
+                  {shoeDistribution.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

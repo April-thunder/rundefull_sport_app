@@ -1,12 +1,18 @@
-// src/context/AppContext.jsx
+// src/context/AppContext.tsx
 import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { AppContext } from './context';
 import { initialWorkouts, initialShoes, initialUser } from '../data/initialData';
 import { parseRussianDateToISO } from '../utils/dateUtils';
+import type { Workout, Shoe, User, Period } from '../types';
 
-export function AppProvider({ children }) {
+interface AppProviderProps {
+  children: ReactNode;
+}
+
+export function AppProvider({ children }: AppProviderProps) {
   // ---------- Аутентификация ----------
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     const saved = localStorage.getItem('rundefull_auth');
     return saved ? JSON.parse(saved) : true;
   });
@@ -24,11 +30,11 @@ export function AppProvider({ children }) {
   };
 
   // ---------- Тренировки ----------
-  const [workouts, setWorkouts] = useState(() => {
+  const [workouts, setWorkouts] = useState<Workout[]>(() => {
     const saved = localStorage.getItem('rundefull_workouts');
-    let parsed = saved ? JSON.parse(saved) : initialWorkouts;
+    const parsed: Workout[] = saved ? JSON.parse(saved) : initialWorkouts;
     // Миграция дат
-    const migrated = parsed.map(w => {
+    const migrated = parsed.map((w) => {
       if (w.date && typeof w.date === 'string' && w.date.match(/[а-я]/i)) {
         const iso = parseRussianDateToISO(w.date);
         if (iso) return { ...w, date: iso };
@@ -42,12 +48,12 @@ export function AppProvider({ children }) {
   }, [workouts]);
 
   // ---------- Обувь ----------
-  const [shoes, setShoes] = useState(() => {
+  const [shoes, setShoes] = useState<Shoe[]>(() => {
     const saved = localStorage.getItem('rundefull_shoes');
     if (saved) {
-      const parsed = JSON.parse(saved);
+      const parsed: Shoe[] = JSON.parse(saved);
       if (parsed.length && parsed[0].brand === undefined) {
-        return parsed.map(shoe => {
+        return parsed.map((shoe) => {
           let brand = '';
           if (shoe.model.includes('Pegasus')) brand = 'Nike';
           else if (shoe.model.includes('Adios')) brand = 'Adidas';
@@ -65,7 +71,7 @@ export function AppProvider({ children }) {
   }, [shoes]);
 
   // ---------- Пользователь ----------
-  const [user, setUser] = useState(() => {
+  const [user, setUser] = useState<User>(() => {
     const saved = localStorage.getItem('rundefull_user');
     return saved ? JSON.parse(saved) : initialUser;
   });
@@ -73,87 +79,96 @@ export function AppProvider({ children }) {
     localStorage.setItem('rundefull_user', JSON.stringify(user));
   }, [user]);
 
-  const [period, setPeriod] = useState('month');
+  const [period, setPeriod] = useState<Period>('month');
 
   // ---------- Функция обновления пробега обуви ----------
-  const updateShoeMileage = (shoeId, delta) => {
+  const updateShoeMileage = (shoeId: number, delta: number) => {
     if (!shoeId) return;
-    setShoes(prev => {
-      const updated = prev.map(shoe =>
+    setShoes((prev) => {
+      const updated = prev.map((shoe) =>
         shoe.id === shoeId
           ? { ...shoe, mileage: Math.max(0, shoe.mileage + delta) }
           : shoe
       );
-      console.log(`[updateShoeMileage] shoeId=${shoeId}, delta=${delta}, new mileage=${updated.find(s => s.id === shoeId)?.mileage}`);
       return updated;
     });
   };
 
   // ---------- CRUD тренировок с обновлением пробега ----------
-  const addWorkout = (workout) => {
-    setWorkouts(prev => [workout, ...prev]);
+  const addWorkout = (workout: Workout) => {
+    setWorkouts((prev) => [workout, ...prev]);
     updateShoeMileage(workout.shoeId, workout.distance);
   };
 
-  const updateWorkout = (updated) => {
-    const old = workouts.find(w => w.id === updated.id);
+  const updateWorkout = (updated: Workout) => {
+    const old = workouts.find((w) => w.id === updated.id);
     if (old) {
       // Вычитаем старую дистанцию из старой обуви
       if (old.shoeId) updateShoeMileage(old.shoeId, -old.distance);
       // Обновляем тренировку
-      setWorkouts(prev => prev.map(w => w.id === updated.id ? updated : w));
+      setWorkouts((prev) => prev.map((w) => (w.id === updated.id ? updated : w)));
       // Прибавляем новую дистанцию к новой обуви
       if (updated.shoeId) updateShoeMileage(updated.shoeId, updated.distance);
     } else {
-      setWorkouts(prev => prev.map(w => w.id === updated.id ? updated : w));
+      setWorkouts((prev) => prev.map((w) => (w.id === updated.id ? updated : w)));
     }
   };
 
-  const deleteWorkout = (id) => {
-    const workout = workouts.find(w => w.id === id);
+  const deleteWorkout = (id: number) => {
+    const workout = workouts.find((w) => w.id === id);
     if (workout) {
       if (workout.shoeId) updateShoeMileage(workout.shoeId, -workout.distance);
-      setWorkouts(prev => prev.filter(w => w.id !== id));
+      setWorkouts((prev) => prev.filter((w) => w.id !== id));
     }
   };
 
   // ---------- CRUD обуви ----------
-  const addShoe = (shoe) => setShoes(prev => [shoe, ...prev]);
+  const addShoe = (shoe: Shoe) => setShoes((prev) => [shoe, ...prev]);
 
   // ---------- Обновление пользователя ----------
-  const updateUser = (newData) => setUser(prev => ({ ...prev, ...newData }));
+  const updateUser = (newData: Partial<User>) =>
+    setUser((prev) => ({ ...prev, ...newData }));
 
   // ---------- Фильтрация ----------
-  const filterByPeriod = (periodValue) => {
+  const filterByPeriod = (periodValue: Period): Workout[] => {
     if (periodValue === 'all') return workouts;
     const now = new Date();
-    let startDate;
+    let startDate: Date;
     switch (periodValue) {
-      case 'week': startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); break;
-      case 'month': startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); break;
-      case 'year': startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); break;
-      default: return workouts;
+      case 'week':
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case 'month':
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+      case 'year':
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        return workouts;
     }
-    return workouts.filter(w => new Date(w.date) >= startDate);
+    return workouts.filter((w) => new Date(w.date) >= startDate);
   };
 
   return (
-    <AppContext.Provider value={{
-      workouts,
-      shoes,
-      user,
-      period,
-      setPeriod,
-      addWorkout,
-      updateWorkout,
-      deleteWorkout,
-      addShoe,
-      updateUser,
-      filterByPeriod,
-      isAuthenticated,
-      login,
-      logout,
-    }}>
+    <AppContext.Provider
+      value={{
+        workouts,
+        shoes,
+        user,
+        period,
+        setPeriod,
+        addWorkout,
+        updateWorkout,
+        deleteWorkout,
+        addShoe,
+        updateUser,
+        filterByPeriod,
+        isAuthenticated,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

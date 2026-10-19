@@ -1,36 +1,48 @@
 import { useState, useRef } from 'react';
+import type { ChangeEvent } from 'react';
 import { useApp } from '../hooks/useApp';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import defaultAvatar from '../assets/default-avatar.png';
 
+// Значения формы — все строки, потому что input работает со строками
+interface ProfileFormValues {
+  name: string;
+  age: string;
+  weight: string;
+}
+
 function ProfilePage() {
   const { user, updateUser, logout } = useApp();
   const navigate = useNavigate();
-  const [isSaving, setIsSaving] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState(user?.photo || null);
-  const [isPhotoChanged, setIsPhotoChanged] = useState(false);
-  const fileInputRef = useRef(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(user?.photo || null);
+  const [isPhotoChanged, setIsPhotoChanged] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const photoSrc = photoPreview || defaultAvatar;
 
-  const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<ProfileFormValues>({
     defaultValues: {
       name: user?.name || '',
-      age: user?.age || '',
-      weight: user?.weight || '',
-    }
+      age: user?.age ? String(user.age) : '',
+      weight: user?.weight ? String(user.weight) : '',
+    },
   });
 
-  // Кнопка активна, если изменены поля формы ИЛИ загружено/удалено фото
   const isFormDirty = isDirty || isPhotoChanged;
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: ProfileFormValues) => {
     setIsSaving(true);
     setTimeout(() => {
       updateUser({
-        ...data,
+        name: data.name,
         age: parseInt(data.age, 10),
         weight: parseFloat(data.weight),
         photo: photoPreview,
@@ -45,22 +57,25 @@ function ProfilePage() {
   const handleCancel = () => {
     reset({
       name: user?.name || '',
-      age: user?.age || '',
-      weight: user?.weight || '',
+      age: user?.age ? String(user.age) : '',
+      weight: user?.weight ? String(user.weight) : '',
     });
     setPhotoPreview(user?.photo || null);
     setIsPhotoChanged(false);
     toast('Изменения отменены', { icon: '↩️' });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPhotoPreview(reader.result);
-      setIsPhotoChanged(true);
-      toast.success('Фото загружено, нажмите «Сохранить»');
+      const result = reader.result;
+      if (typeof result === 'string') {
+        setPhotoPreview(result);
+        setIsPhotoChanged(true);
+        toast.success('Фото загружено, нажмите «Сохранить»');
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -85,7 +100,9 @@ function ProfilePage() {
         <div className="profile-photo-section">
           <img src={photoSrc} alt="Фото профиля" className="profile-photo" />
           <div className="photo-actions">
-            <button onClick={() => fileInputRef.current.click()}>Выбрать фото</button>
+            <button onClick={() => fileInputRef.current?.click()}>
+              Выбрать фото
+            </button>
             <input
               type="file"
               accept="image/*"
@@ -102,7 +119,10 @@ function ProfilePage() {
         <form onSubmit={handleSubmit(onSubmit)} className="profile-form">
           <label>
             Имя
-            <input {...register('name', { required: 'Имя обязательно' })} placeholder="Ваше имя" />
+            <input
+              {...register('name', { required: 'Имя обязательно' })}
+              placeholder="Ваше имя"
+            />
             {errors.name && <span className="field-error">{errors.name.message}</span>}
           </label>
           <label>
@@ -142,7 +162,9 @@ function ProfilePage() {
           </div>
         </form>
 
-        <button className="logout-btn" onClick={handleLogout}>Выйти из профиля</button>
+        <button className="logout-btn" onClick={handleLogout}>
+          Выйти из профиля
+        </button>
       </div>
     </div>
   );

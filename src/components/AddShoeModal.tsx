@@ -1,35 +1,43 @@
 import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { shoeBrands, shoeModelsByBrand } from '../data/shoeModels';
+import type { Shoe } from '../types';
 
-function AddShoeModal({ shoes, onClose, onAdd }) {
-  const [brand, setBrand] = useState('');
-  const [model, setModel] = useState('');
-  const [customModel, setCustomModel] = useState('');
-  const [maxMileage, setMaxMileage] = useState('');
-  const [useCustomModel, setUseCustomModel] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
+interface AddShoeModalProps {
+  shoes: Shoe[];
+  onClose: () => void;
+  onAdd: (shoe: Shoe) => void;
+}
 
-  const handleBrandChange = (e) => {
+function AddShoeModal({ shoes, onClose, onAdd }: AddShoeModalProps) {
+  const [brand, setBrand] = useState<string>('');
+  const [model, setModel] = useState<string>('');
+  const [customModel, setCustomModel] = useState<string>('');
+  const [maxMileage, setMaxMileage] = useState<string>('');
+  const [useCustomModel, setUseCustomModel] = useState<boolean>(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleBrandChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setBrand(e.target.value);
     setModel('');
     setCustomModel('');
     setImagePreview(null);
   };
 
-  const handleModelChange = (e) => {
+  const handleModelChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setModel(e.target.value);
     setCustomModel('');
     const imgPath = `/shoes/${brand.toLowerCase()}-${e.target.value.toLowerCase().replace(/ /g, '-')}.webp`;
     setImagePreview(imgPath);
   };
 
-  const handleCustomModelChange = (e) => {
+  const handleCustomModelChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCustomModel(e.target.value);
     setModel('');
     setImagePreview(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!brand) {
@@ -46,7 +54,6 @@ function AddShoeModal({ shoes, onClose, onAdd }) {
       return;
     }
 
-    // Проверка на дубликат
     if (Array.isArray(shoes) && shoes.length > 0) {
       const isDuplicate = shoes.some(
         (shoe) =>
@@ -59,7 +66,7 @@ function AddShoeModal({ shoes, onClose, onAdd }) {
       }
     }
 
-    const newShoe = {
+    const newShoe: Shoe = {
       id: Date.now(),
       brand,
       model: finalModel,
@@ -81,7 +88,6 @@ function AddShoeModal({ shoes, onClose, onAdd }) {
         />
       );
     }
-    // Если imagePreview нет — ничего не показываем
     return null;
   };
 
@@ -96,7 +102,9 @@ function AddShoeModal({ shoes, onClose, onAdd }) {
             Фирма:
             <select value={brand} onChange={handleBrandChange} required>
               <option value="">Выберите фирму</option>
-              {shoeBrands.map(b => <option key={b} value={b}>{b}</option>)}
+              {shoeBrands.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
             </select>
           </label>
 
@@ -128,7 +136,9 @@ function AddShoeModal({ shoes, onClose, onAdd }) {
                   Модель:
                   <select value={model} onChange={handleModelChange} required={!useCustomModel}>
                     <option value="">Выберите модель</option>
-                    {shoeModelsByBrand[brand]?.map(m => <option key={m} value={m}>{m}</option>)}
+                    {shoeModelsByBrand[brand]?.map((m) => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
                   </select>
                 </label>
               ) : (
@@ -144,9 +154,7 @@ function AddShoeModal({ shoes, onClose, onAdd }) {
                 </label>
               )}
 
-              <div className="image-preview">
-                {renderImage()}
-              </div>
+              <div className="image-preview">{renderImage()}</div>
             </>
           )}
 
@@ -156,7 +164,7 @@ function AddShoeModal({ shoes, onClose, onAdd }) {
               type="number"
               step="10"
               value={maxMileage}
-              onChange={e => setMaxMileage(e.target.value)}
+              onChange={(e) => setMaxMileage(e.target.value)}
               required
             />
           </label>
