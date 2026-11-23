@@ -34,8 +34,8 @@ function WorkoutDetailModal({
     }
   };
 
-  const avgHeartRate = workout.avgHeartRate || '—';
-  const maxHeartRate = workout.maxHeartRate || '—';
+  const avgHeartRate = workout.avgHeartRate ?? '—';
+  const maxHeartRate = workout.maxHeartRate ?? '—';
 
   return (
     <>

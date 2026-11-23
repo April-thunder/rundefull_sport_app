@@ -5,6 +5,7 @@ import { AppContext } from './context';
 import { initialWorkouts, initialShoes, initialUser } from '../data/initialData';
 import { parseRussianDateToISO } from '../utils/dateUtils';
 import type { Workout, Shoe, User, Period } from '../types';
+import { isWorkoutArray, isShoeArray, isUser } from '../types';
 
 interface AppProviderProps {
   children: ReactNode;
@@ -13,9 +14,11 @@ interface AppProviderProps {
 export function AppProvider({ children }: AppProviderProps) {
   // ---------- Аутентификация ----------
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const saved = localStorage.getItem('rundefull_auth');
-    return saved ? JSON.parse(saved) : true;
-  });
+  const saved = localStorage.getItem('rundefull_auth');
+  if (!saved) return true;
+  const parsed: unknown = JSON.parse(saved);
+  return typeof parsed === 'boolean' ? parsed : true;
+});
   useEffect(() => {
     localStorage.setItem('rundefull_auth', JSON.stringify(isAuthenticated));
   }, [isAuthenticated]);
@@ -31,50 +34,47 @@ export function AppProvider({ children }: AppProviderProps) {
 
   // ---------- Тренировки ----------
   const [workouts, setWorkouts] = useState<Workout[]>(() => {
-    const saved = localStorage.getItem('rundefull_workouts');
-    const parsed: Workout[] = saved ? JSON.parse(saved) : initialWorkouts;
-    // Миграция дат
-    const migrated = parsed.map((w) => {
-      if (w.date && typeof w.date === 'string' && w.date.match(/[а-я]/i)) {
-        const iso = parseRussianDateToISO(w.date);
-        if (iso) return { ...w, date: iso };
-      }
-      return w;
-    });
-    return migrated;
+  const saved = localStorage.getItem('rundefull_workouts');
+  const parsed: unknown = saved ? JSON.parse(saved) : initialWorkouts;
+  const safeWorkouts: Workout[] = isWorkoutArray(parsed) ? parsed : initialWorkouts;
+  const migrated = safeWorkouts.map((w) => {
+    if (w.date && typeof w.date === 'string' && w.date.match(/[а-я]/i)) {
+      const iso = parseRussianDateToISO(w.date);
+      if (iso) return { ...w, date: iso };
+    }
+    return w;
   });
+  return migrated;
+});
   useEffect(() => {
     localStorage.setItem('rundefull_workouts', JSON.stringify(workouts));
   }, [workouts]);
 
   // ---------- Обувь ----------
   const [shoes, setShoes] = useState<Shoe[]>(() => {
-    const saved = localStorage.getItem('rundefull_shoes');
-    if (saved) {
-      const parsed: Shoe[] = JSON.parse(saved);
-      if (parsed.length && parsed[0].brand === undefined) {
-        return parsed.map((shoe) => {
-          let brand = '';
-          if (shoe.model.includes('Pegasus')) brand = 'Nike';
-          else if (shoe.model.includes('Adios')) brand = 'Adidas';
-          else if (shoe.model.includes('Clifton')) brand = 'Hoka';
-          else brand = 'Other';
-          return { ...shoe, brand, maxMileage: shoe.maxMileage || 800 };
-        });
-      }
-      return parsed;
+  const saved = localStorage.getItem('rundefull_shoes');
+  if (saved) {
+    const parsed: unknown = JSON.parse(saved);
+    if (isShoeArray(parsed)) {
+      return parsed.map((shoe) => ({
+        ...shoe,
+        maxMileage: shoe.maxMileage ?? 800,
+      }));
     }
-    return initialShoes;
-  });
+  }
+  return initialShoes;
+});
   useEffect(() => {
     localStorage.setItem('rundefull_shoes', JSON.stringify(shoes));
   }, [shoes]);
 
   // ---------- Пользователь ----------
   const [user, setUser] = useState<User>(() => {
-    const saved = localStorage.getItem('rundefull_user');
-    return saved ? JSON.parse(saved) : initialUser;
-  });
+  const saved = localStorage.getItem('rundefull_user');
+  if (!saved) return initialUser;
+  const parsed: unknown = JSON.parse(saved);
+  return isUser(parsed) ? parsed : initialUser;
+});
   useEffect(() => {
     localStorage.setItem('rundefull_user', JSON.stringify(user));
   }, [user]);

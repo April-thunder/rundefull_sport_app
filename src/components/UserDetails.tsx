@@ -12,11 +12,11 @@ function UserDetails() {
         </div>
         <div className="info-field">
           <dt>Возраст</dt>
-          <dd>{user.age || '—'} лет</dd>
+          <dd>{user.age ?? '—'} лет</dd>
         </div>
         <div className="info-field">
           <dt>Вес</dt>
-          <dd>{user.weight || '—'} кг</dd>
+          <dd>{user.weight ?? '—'} кг</dd>
         </div>
       </dl>
     </div>

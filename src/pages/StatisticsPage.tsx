@@ -20,7 +20,8 @@ import {
 const COLORS = ['#1e4a76', '#2c6e9e', '#4a8db7', '#7ab0d4', '#a8cce0', '#c9dce8'];
 
 // Тип для группировки
-type Aggregation = 'years' | 'months' | 'weeks' | 'days';
+const AGGREGATIONS = ['years', 'months', 'weeks', 'days'] as const;
+type Aggregation = (typeof AGGREGATIONS)[number];
 
 // Точка на графике объёма/темпа
 interface AggregatedPoint {
@@ -129,7 +130,7 @@ function StatisticsPage() {
     if (!shoes || shoes.length === 0) return [];
     return shoes.map((shoe) => ({
       name: `${shoe.brand} ${shoe.model}`,
-      value: shoe.mileage || 0,
+      value: shoe.mileage ?? 0,
     }));
   }, [shoes]);
 
@@ -137,7 +138,7 @@ function StatisticsPage() {
   const totalDistance = workouts.reduce((sum, w) => sum + w.distance, 0);
   const totalWorkouts = workouts.length;
   const avgPace = totalDistance > 0
-    ? workouts.reduce((sum, w) => sum + parseFloat(w.pace || '0'), 0) / totalWorkouts
+    ? workouts.reduce((sum, w) => sum + parseFloat(w.pace ?? '0'), 0) / totalWorkouts
     : 0;
   const avgDistance = totalWorkouts > 0 ? totalDistance / totalWorkouts : 0;
 
@@ -172,7 +173,7 @@ function StatisticsPage() {
       </div>
 
       <div className="aggregation-switch">
-        {(['years', 'months', 'weeks', 'days'] as Aggregation[]).map((a) => (
+        {AGGREGATIONS.map((a) => (
           <button
             key={a}
             className={aggregation === a ? 'active' : ''}
